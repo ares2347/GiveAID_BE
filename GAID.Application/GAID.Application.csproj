@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\GAID.Domain\GAID.Domain.csproj" />
+      <ProjectReference Include="..\GAID.Shared\GAID.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Hangfire" Version="1.8.5" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.21.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="MassTransit.Abstractions">
+        <HintPath>C:\Users\trant\.nuget\packages\masstransit.abstractions\8.1.0\lib\net7.0\MassTransit.Abstractions.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>
