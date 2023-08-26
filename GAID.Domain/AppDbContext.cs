@@ -3,6 +3,7 @@ using GAID.Domain.Models.Email;
 using GAID.Domain.Models.Partner;
 using GAID.Domain.Models.Program;
 using GAID.Domain.Models.User;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -18,6 +19,20 @@ public class AppDbContext : IdentityDbContext<User, Role,  Guid>
 
     public AppDbContext(DbContextOptions options) : base(options)
     {
+    }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Program>()
+            .HasOne(c => c.ProgramThumbnail)
+            .WithOne()
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Partner>()
+            .HasOne(c => c.PartnerThumbnail)
+            .WithOne()
+            .OnDelete(DeleteBehavior.NoAction);
+        
     }
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {

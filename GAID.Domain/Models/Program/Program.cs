@@ -11,6 +11,10 @@ public class Program : BaseEntity
     public string DonationReason { get; set; } = string.Empty;
     public decimal Target { get; set; }
     public DateOnly EndDate { get; set; }
+    
+    [ForeignKey("ProgramThumbnail")]
+    public Guid ProgramThumbnailId { get; set; }
+    public Attachment.Attachment ProgramThumbnail { get; set; } = new();
     public Page.Page Page { get; set; } = new();
     
     [ForeignKey("Partner")]

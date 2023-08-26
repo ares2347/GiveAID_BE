@@ -30,11 +30,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-      <Folder Include="Dto\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\GAID.Application\GAID.Application.csproj" />
       <ProjectReference Include="..\GAID.Domain\GAID.Domain.csproj" />
       <ProjectReference Include="..\GAID.Shared\GAID.Shared.csproj" />

@@ -7,64 +7,31 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GAID.Application.Repositories.Attachment;
 
-public class AttachmentRepository : IBaseRepository<Domain.Models.Attachment.Attachment>
+public class AttachmentRepository : BaseRepository<Domain.Models.Attachment.Attachment>
 {
-    private readonly AppDbContext _dbContext;
 
-    public AttachmentRepository(AppDbContext dbContext)
+    public AttachmentRepository(AppDbContext dbContext) : base(dbContext)
     {
-        _dbContext = dbContext;
     }
-
-    public IQueryable<Domain.Models.Attachment.Attachment> Get(Expression<Func<Domain.Models.Attachment.Attachment, bool>>? expression = null, int size = 10,
-        int page = 0)
+    
+    public override async Task<Domain.Models.Attachment.Attachment?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
-        var query = _dbContext.Attachments.Where(x => !x.IsDelete);
-        if (expression is not null)
-        {
-            query = query.Where(expression);
-        }
-
-        return query.Skip(page).Take(size);
-    }
-
-    public async Task<Domain.Models.Attachment.Attachment?> GetById(Guid id, CancellationToken cancellationToken = default)
-    {
-        return await _dbContext.Attachments.FirstOrDefaultAsync(a => a.AttachmentId.Equals(id),
+        return await DbContext.Attachments
+            .Include(x => x.CreatedBy)
+            .Include(x => x.ModifiedBy)
+            .FirstOrDefaultAsync(a => a.AttachmentId.Equals(id),
             cancellationToken: cancellationToken);
     }
 
-    public async Task<Domain.Models.Attachment.Attachment?> Create(Domain.Models.Attachment.Attachment entity, CancellationToken cancellationToken = default)
+    public override Domain.Models.Attachment.Attachment Create(Domain.Models.Attachment.Attachment entity)
     {
         if (entity.AttachmentId.Equals(Guid.Empty))
         {
             entity.AttachmentId = NewId.NextGuid();
         }
 
-        var res = _dbContext.Attachments.Add(entity);
+        var res = DbContext.Attachments.Add(entity);
 
         return res.Entity;
     }
-
-    public Task<Domain.Models.Attachment.Attachment?> Update(Domain.Models.Attachment.Attachment entity, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
     }
-
-    public async Task<bool> Delete(Guid id, bool isHardDelete = false, CancellationToken cancellationToken = default)
-    {
-        var attachment = await _dbContext.Attachments.FirstOrDefaultAsync(a => a.AttachmentId.Equals(id),
-            cancellationToken: cancellationToken);
-
-        HttpException.ThrowIfNull(attachment, HttpStatusCode.NotFound);
-
-        attachment!.IsDelete = true;
-        _dbContext.Attachments.Update(attachment);
-        if (isHardDelete)
-        {
-            _dbContext.Remove(attachment);
-        }
-
-        return true;
-    }
-}

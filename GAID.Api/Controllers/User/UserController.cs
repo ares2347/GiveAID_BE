@@ -164,7 +164,7 @@ public class UserController : ControllerBase
             var filePath =
                 await _attachmentService.SaveFileAsync(file.OpenReadStream(), attachmentId.ToString());
 
-            var attachment = new Attachment
+            var attachment = new Domain.Models.Attachment.Attachment
             {
                 AttachmentId = attachmentId,
                 Path = filePath,
@@ -177,7 +177,7 @@ public class UserController : ControllerBase
                 ModifiedAt = DateTimeOffset.Now
             };
 
-            var res = await _unitOfWork.AttachmentRepository.Create(attachment, _);
+            var res = _unitOfWork.AttachmentRepository.Create(attachment);
             await _unitOfWork.SaveChangesAsync(_);
             user!.ProfilePictureId = res?.AttachmentId;
             return await _userManager.UpdateAsync(user);
