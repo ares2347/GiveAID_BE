@@ -76,7 +76,7 @@ public class PartnerController : ControllerBase
             partner.Name = request.Name;
             partner.Email = request.Email;
             partner.Description = request.Description;
-            partner.Page = partner.Page;
+            // partner.Page = request.Page;
             partner.PartnerThumbnailId = request.PartnerThumbnail;
             var result = _unitOfWork.PartnerRepository.Update(partner);
             await _unitOfWork.SaveChangesAsync(_);

@@ -81,7 +81,7 @@ public class ProgramController : ControllerBase
             program.DonationReason = request.DonationReason;
             program.Target = request.Target;
             program.EndDate = request.EndDate;
-            program.Page = request.Page;
+            // program.Page = request.Page;
             var result = _unitOfWork.ProgramRepository.Update(program);
             await _unitOfWork.SaveChangesAsync(_);
             return Ok(result);

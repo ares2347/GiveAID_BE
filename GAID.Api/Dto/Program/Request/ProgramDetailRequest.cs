@@ -11,6 +11,6 @@ public class ProgramDetailRequest
     public decimal Target { get; set; }
     public DateOnly EndDate { get; set; }
     public Guid ProgramThumbnailId { get; set; } = new();
-    public Page Page { get; set; } = new();
+    // public Page Page { get; set; } = new();
     public Guid PartnerId { get; set; }
 }

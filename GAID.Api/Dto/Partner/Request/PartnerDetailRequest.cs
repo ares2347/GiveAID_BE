@@ -8,5 +8,5 @@ public class PartnerDetailRequest
     public string Email { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public Guid PartnerThumbnail { get; set; }
-    public Domain.Models.Page.Page Page { get; set; } = new();
+    // public Domain.Models.Page.Page Page { get; set; } = new();
 }
