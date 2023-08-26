@@ -11,5 +11,9 @@
         <HintPath>C:\Users\trant\.nuget\packages\masstransit.abstractions\8.1.0\lib\net7.0\MassTransit.Abstractions.dll</HintPath>
       </Reference>
     </ItemGroup>
+    
+    <ItemGroup>
+      <PackageReference Include="MassTransit" Version="8.1.0" />
+    </ItemGroup>
 
 </Project>
