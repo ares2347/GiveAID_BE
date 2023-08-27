@@ -1,17 +1,22 @@
 using System.Linq.Expressions;
-using GAID.Application.Repositories;
 using GAID.Domain;
 using GAID.Domain.Models;
+using GAID.Shared;
+using Microsoft.AspNetCore.Identity;
 
-namespace GAID.Application;
+namespace GAID.Application.Repositories;
 
 public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
 {
     protected readonly AppDbContext DbContext;
+    private readonly UserContext _userContext;
+    private readonly UserManager<Domain.Models.User.User> _userManager;
 
-    protected BaseRepository(AppDbContext dbContext)
+    protected BaseRepository(AppDbContext dbContext, UserContext userContext, UserManager<Domain.Models.User.User> userManager)
     {
         DbContext = dbContext;
+        _userContext = userContext;
+        _userManager = userManager;
     }
     public virtual IQueryable<T> Get(Expression<Func<T, bool>>? expression, int? size, int? page)
     {
@@ -38,14 +43,19 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
 
     public abstract Task<T?> GetById(Guid id, CancellationToken cancellationToken = default);
 
-    public virtual T Create(T entity)
+    public virtual async Task<T> Create(T entity)
     {
+        var user = await _userManager.FindByIdAsync(_userContext.UserId.ToString());
+        entity.CreatedBy = user;
+        entity.CreatedAt = DateTimeOffset.UtcNow;
         var res = DbContext.Set<T>().Add(entity);
         return res.Entity;
     }
 
-    public virtual T Update(T entity)
+    public virtual async Task<T> Update(T entity)
     {
+        var user = await _userManager.FindByIdAsync(_userContext.UserId.ToString());
+        entity.ModifiedBy = user;
         entity.ModifiedAt = DateTimeOffset.UtcNow;
         var res = DbContext.Set<T>().Update(entity);
         return res.Entity;

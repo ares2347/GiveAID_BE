@@ -1,4 +1,5 @@
 using GAID.Api.Dto.Attachment;
+using GAID.Api.Dto.Page.Response;
 using GAID.Api.Dto.Program.Response;
 using GAID.Domain.Models.Page;
 
@@ -10,7 +11,7 @@ public class PartnerDetailDto
     public string Name { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public Page Page { get; set; } = new();
+    public PageDetailDto Page { get; set; } = new();
     public AttachmentDetailDto PartnerThumbnail { get; set; } = new();
     public List<ProgramListingDto> Programs { get; set; } = new();
     public DateTimeOffset? ModifiedAt { get; set; } = DateTimeOffset.UtcNow;

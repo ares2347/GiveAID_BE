@@ -1,4 +1,6 @@
+using GAID.Api.Dto.Attachment;
 using GAID.Api.Dto.Enrollment.Response;
+using GAID.Api.Dto.Page.Response;
 using GAID.Domain.Models.Page;
 
 namespace GAID.Api.Dto.Program.Response;
@@ -9,11 +11,12 @@ public class ProgramDetailDto
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string DonationInfo { get; set; } = string.Empty;
-    public string DonationReason { get; set; } = string.Empty;
+    public List<string> DonationReason { get; set; } =new();
     public decimal Target { get; set; }
     public DateOnly EndDate { get; set; }
-    public Page Page { get; set; } = new();
-    public Domain.Models.Attachment.Attachment ProgramThumbnail { get; set; } = new();
+    public PageDetailDto Page { get; set; } = new();
+    public decimal TotalDonation { get; set; }
+    public AttachmentDetailDto ProgramThumbnail { get; set; } = new();
     public List<EnrollmentListingDto> Enrollments { get; set; } = new();
     public DateTimeOffset? ModifiedAt { get; set; } = DateTimeOffset.UtcNow;
     public Guid? ModifiedById { get; set; }

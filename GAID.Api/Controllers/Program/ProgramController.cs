@@ -4,8 +4,10 @@ using GAID.Api.Dto.Partner.Response;
 using GAID.Api.Dto.Program.Request;
 using GAID.Api.Dto.Program.Response;
 using GAID.Application.Repositories;
+using GAID.Domain.Models.Donation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace GAID.Api.Controllers.Program;
 
@@ -21,9 +23,10 @@ public class ProgramController : ControllerBase
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
-    
+
     [HttpGet]
-    public ActionResult<IQueryable<ProgramListingDto>> GetPrograms(int page = 0, int size = 10, CancellationToken _ = default)
+    public ActionResult<IQueryable<ProgramListingDto>> GetPrograms(int page = 0, int size = 10,
+        CancellationToken _ = default)
     {
         var partners = _unitOfWork.ProgramRepository.Get(x => !x.IsDelete, size, page)
             .Select(x => _mapper.Map<ProgramListingDto>(x));
@@ -31,7 +34,8 @@ public class ProgramController : ControllerBase
     }
 
     [HttpGet("{programId:guid}")]
-    public async Task<ActionResult<ProgramDetailDto>> GetProgramById([FromRoute] Guid programId, CancellationToken _ = default)
+    public async Task<ActionResult<ProgramDetailDto>> GetProgramById([FromRoute] Guid programId,
+        CancellationToken _ = default)
     {
         try
         {
@@ -45,30 +49,33 @@ public class ProgramController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
+
     //TODO: Add role to authorization
     [Authorize]
     [HttpPost("create")]
-    public async Task<ActionResult<PartnerDetailDto>> CreateProgram(ProgramDetailRequest request, CancellationToken _ = default)
+    public async Task<ActionResult<ProgramDetailDto>> CreateProgram(ProgramDetailRequest request,
+        CancellationToken _ = default)
     {
         try
         {
             var entity = _mapper.Map<Domain.Models.Program.Program>(request);
             entity.ProgramThumbnailId = request.ProgramThumbnailId;
-            var result = _unitOfWork.ProgramRepository.Create(entity);
+            entity.DonationReason = JsonConvert.SerializeObject(request.DonationReason);
+            var result = await _unitOfWork.ProgramRepository.Create(entity);
             await _unitOfWork.SaveChangesAsync(_);
-            return Ok(result);
+            return Ok(_mapper.Map<ProgramDetailDto>(result));
         }
         catch (Exception e)
         {
             return BadRequest(e.Message);
         }
     }
-    
+
     //TODO: Add role to authorization
     [Authorize]
     [HttpPut("update/{programId:guid}")]
-    public async Task<ActionResult<PartnerDetailDto>> UpdateProgram([FromRoute] Guid programId, ProgramDetailRequest request, CancellationToken _ = default)
+    public async Task<ActionResult<ProgramDetailDto>> UpdateProgram([FromRoute] Guid programId,
+        ProgramDetailRequest request, CancellationToken _ = default)
     {
         try
         {
@@ -78,13 +85,13 @@ public class ProgramController : ControllerBase
             program.Name = request.Name;
             program.Description = request.Description;
             program.DonationInfo = request.DonationInfo;
-            program.DonationReason = request.DonationReason;
+            program.DonationReason = JsonConvert.SerializeObject(request.DonationReason);
             program.Target = request.Target;
             program.EndDate = request.EndDate;
             // program.Page = request.Page;
-            var result = _unitOfWork.ProgramRepository.Update(program);
+            var result = await _unitOfWork.ProgramRepository.Update(program);
             await _unitOfWork.SaveChangesAsync(_);
-            return Ok(result);
+            return Ok(_mapper.Map<ProgramDetailDto>(result));
         }
         catch (Exception e)
         {
@@ -92,5 +99,34 @@ public class ProgramController : ControllerBase
         }
     }
     
+    [HttpPut("enroll/{programId:guid}")]
+    public async Task<ActionResult<ProgramDetailDto>> EnrollProgram([FromRoute] Guid programId, CancellationToken _ = default)
+    {
+        try
+        {
+            var result = await _unitOfWork.ProgramRepository.AddEnrollment(programId, _);
+            await _unitOfWork.SaveChangesAsync(_);
+            return Ok(_mapper.Map<ProgramDetailDto>(result));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
     
+    [HttpPut("donate/{programId:guid}")]
+    public async Task<ActionResult<ProgramDetailDto>> DonateProgram([FromRoute] Guid programId, DonationDetailRequest request, CancellationToken _ = default)
+    {
+        try
+        {
+            var donation = _mapper.Map<Donation>(request);
+            var result = await _unitOfWork.ProgramRepository.AddDonation(programId, donation, _);
+            await _unitOfWork.SaveChangesAsync(_);
+            return Ok(_mapper.Map<ProgramDetailDto>(result));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
 }

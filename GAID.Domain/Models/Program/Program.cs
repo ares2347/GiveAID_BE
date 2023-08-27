@@ -22,4 +22,6 @@ public class Program : BaseEntity
     public Partner.Partner? Partner { get; set; }
 
     public List<Enrollment.Enrollment> Enrollments { get; set; } = new();
+
+    [NotMapped] public decimal TotalDonation => Enrollments.Sum(x => x.Donations.Sum(y => y.Amount));
 }

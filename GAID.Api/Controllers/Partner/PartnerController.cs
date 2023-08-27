@@ -2,7 +2,9 @@ using AutoMapper;
 using GAID.Api.Dto.Partner.Request;
 using GAID.Api.Dto.Partner.Response;
 using GAID.Application.Repositories;
+using GAID.Shared;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -54,9 +56,9 @@ public class PartnerController : ControllerBase
         {
             var entity = _mapper.Map<Domain.Models.Partner.Partner>(request);
             entity.PartnerThumbnailId = request.PartnerThumbnail;
-            var result = _unitOfWork.PartnerRepository.Create(entity);
+            var result = await _unitOfWork.PartnerRepository.Create(entity);
             await _unitOfWork.SaveChangesAsync(_);
-            return Ok(result);
+            return Ok(_mapper.Map<PartnerDetailDto>(result));
         }
         catch (Exception e)
         {
@@ -78,9 +80,9 @@ public class PartnerController : ControllerBase
             partner.Description = request.Description;
             // partner.Page = request.Page;
             partner.PartnerThumbnailId = request.PartnerThumbnail;
-            var result = _unitOfWork.PartnerRepository.Update(partner);
+            var result = await _unitOfWork.PartnerRepository.Update(partner);
             await _unitOfWork.SaveChangesAsync(_);
-            return Ok(result);
+            return Ok(_mapper.Map<PartnerDetailDto>(result));
         }
         catch (Exception e)
         {

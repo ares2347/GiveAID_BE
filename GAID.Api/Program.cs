@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Mail;
+using DateOnlyTimeOnly.AspNet.Converters;
 using GAID.Api.Configuration;
 using GAID.Application.Attachment;
 using GAID.Application.Authorization;
@@ -10,8 +11,10 @@ using GAID.Domain;
 using GAID.Shared;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using DateOnlyJsonConverter = GAID.Shared.DateOnlyJsonConverter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,10 +71,21 @@ builder.Services.AddControllers()
         opt.SerializerSettings.Converters.Add(new StringEnumConverter());
     });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>
+{
+    x.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+    x.JsonSerializerOptions.Converters.Add(new NullableDateOnlyJsonConverter());
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.MapType<DateOnly>(() => new OpenApiSchema
+    {
+        Type = "string",
+        Format = "date"
+    });
+});
 
 var app = builder.Build();
 app.UseSwagger();

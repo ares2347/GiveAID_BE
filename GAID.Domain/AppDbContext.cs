@@ -1,5 +1,6 @@
 using GAID.Domain.Models.Attachment;
 using GAID.Domain.Models.Email;
+using GAID.Domain.Models.Page;
 using GAID.Domain.Models.Partner;
 using GAID.Domain.Models.Program;
 using GAID.Domain.Models.User;
@@ -16,6 +17,7 @@ public class AppDbContext : IdentityDbContext<User, Role,  Guid>
     public DbSet<Attachment> Attachments { get; set; }
     public DbSet<Partner> Partners { get; set; }
     public DbSet<Program> Programs { get; set; }
+    public DbSet<Page> Pages { get; set; }
 
     public AppDbContext(DbContextOptions options) : base(options)
     {

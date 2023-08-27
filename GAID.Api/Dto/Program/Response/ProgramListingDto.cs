@@ -1,3 +1,4 @@
+using GAID.Api.Dto.Attachment;
 using GAID.Api.Dto.Partner.Response;
 
 namespace GAID.Api.Dto.Program.Response;
@@ -10,5 +11,5 @@ public class ProgramListingDto
     public DateOnly EndDate { get; set; }
     public Guid PartnerId { get; set; }
     public PartnerListingDto? Partner { get; set; }
-    public Domain.Models.Attachment.Attachment ProgramThumbnail { get; set; } = new();
+    public AttachmentDetailDto ProgramThumbnail { get; set; } = new();
 }

@@ -177,7 +177,7 @@ public class UserController : ControllerBase
                 ModifiedAt = DateTimeOffset.Now
             };
 
-            var res = _unitOfWork.AttachmentRepository.Create(attachment);
+            var res = await _unitOfWork.AttachmentRepository.Create(attachment);
             await _unitOfWork.SaveChangesAsync(_);
             user!.ProfilePictureId = res?.AttachmentId;
             return await _userManager.UpdateAsync(user);

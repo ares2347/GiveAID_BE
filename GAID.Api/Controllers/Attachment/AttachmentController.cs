@@ -48,20 +48,16 @@ public class AttachmentController : ControllerBase
                 Path = filePath,
                 Name = file.FileName,
                 Size = file.Length,
-                ContentType = file.ContentType,
-                CreatedBy = user,
-                CreatedAt = DateTimeOffset.Now,
-                ModifiedBy = user,
-                ModifiedAt = DateTimeOffset.Now
+                ContentType = file.ContentType
             };
 
-            var res = _unitOfWork.AttachmentRepository.Create(attachment);
+            var res = await _unitOfWork.AttachmentRepository.Create(attachment);
             await _unitOfWork.SaveChangesAsync(_);
             return _mapper.Map<AttachmentDetailDto>(res);
         }
         catch (Exception e)
         {
-            throw new HttpException("Upload profile picture failed.", HttpStatusCode.BadRequest);
+            throw new HttpException("Upload atachment failed.", HttpStatusCode.BadRequest);
         }
     }
     
