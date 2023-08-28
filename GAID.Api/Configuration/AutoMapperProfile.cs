@@ -6,10 +6,12 @@ using GAID.Api.Dto.Partner.Request;
 using GAID.Api.Dto.Partner.Response;
 using GAID.Api.Dto.Program.Request;
 using GAID.Api.Dto.Program.Response;
+using GAID.Api.Dto.User.Response;
 using GAID.Domain.Models.Attachment;
 using GAID.Domain.Models.Donation;
 using GAID.Domain.Models.Page;
 using GAID.Domain.Models.Partner;
+using GAID.Domain.Models.User;
 using Newtonsoft.Json;
 
 namespace GAID.Api.Configuration;
@@ -19,6 +21,8 @@ public class AutoMapperProfile : Profile
     public AutoMapperProfile()
     {
         //UserDTO mapping
+        CreateMap<User, UserInfoResponse>();
+        
         CreateMap<PartnerDetailRequest, Partner>();
         CreateMap<Partner, PartnerListingDto>();
         CreateMap<Partner, PartnerDetailDto>()
