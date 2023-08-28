@@ -129,7 +129,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.UseCors();
 //config get file name in header
 app.Use(async (context, next) =>
 {
