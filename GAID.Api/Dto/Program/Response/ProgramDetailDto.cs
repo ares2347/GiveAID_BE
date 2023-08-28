@@ -1,7 +1,6 @@
 using GAID.Api.Dto.Attachment;
 using GAID.Api.Dto.Enrollment.Response;
 using GAID.Api.Dto.Page.Response;
-using GAID.Domain.Models.Page;
 
 namespace GAID.Api.Dto.Program.Response;
 
@@ -18,6 +17,7 @@ public class ProgramDetailDto
     public decimal TotalDonation { get; set; }
     public AttachmentDetailDto ProgramThumbnail { get; set; } = new();
     public List<EnrollmentListingDto> Enrollments { get; set; } = new();
+    public EnrollmentListingDto CurrentUserEnrollment { get; set; } = new();
     public DateTimeOffset? ModifiedAt { get; set; } = DateTimeOffset.UtcNow;
     public Guid? ModifiedById { get; set; }
     public string? ModifiedByName { get; set; }

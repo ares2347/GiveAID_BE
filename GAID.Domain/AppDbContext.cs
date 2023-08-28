@@ -1,5 +1,7 @@
 using GAID.Domain.Models.Attachment;
+using GAID.Domain.Models.Donation;
 using GAID.Domain.Models.Email;
+using GAID.Domain.Models.Enrollment;
 using GAID.Domain.Models.Page;
 using GAID.Domain.Models.Partner;
 using GAID.Domain.Models.Program;
@@ -18,6 +20,8 @@ public class AppDbContext : IdentityDbContext<User, Role,  Guid>
     public DbSet<Partner> Partners { get; set; }
     public DbSet<Program> Programs { get; set; }
     public DbSet<Page> Pages { get; set; }
+    public DbSet<Enrollment> Enrollments { get; set; }
+    public DbSet<Donation> Donations { get; set; }
 
     public AppDbContext(DbContextOptions options) : base(options)
     {
@@ -34,6 +38,14 @@ public class AppDbContext : IdentityDbContext<User, Role,  Guid>
             .HasOne(c => c.PartnerThumbnail)
             .WithOne()
             .OnDelete(DeleteBehavior.NoAction);
+        
+        //Seed DB
+        modelBuilder.Entity<User>()
+            .HasData(BuiltInData.BuiltInData.SeedUserData());
+        modelBuilder.Entity<Role>()
+            .HasData(BuiltInData.BuiltInData.SeedRoleData());
+        modelBuilder.Entity<IdentityUserRole<Guid>>()
+            .HasData(BuiltInData.BuiltInData.SeedUserRoles());
         
     }
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

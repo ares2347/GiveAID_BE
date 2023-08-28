@@ -1,7 +1,6 @@
 using GAID.Api.Dto.Attachment;
 using GAID.Api.Dto.Page.Response;
 using GAID.Api.Dto.Program.Response;
-using GAID.Domain.Models.Page;
 
 namespace GAID.Api.Dto.Partner.Response;
 

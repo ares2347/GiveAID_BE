@@ -1,9 +1,9 @@
 ﻿using GAID.Application.Repositories.Attachment;
+using GAID.Application.Repositories.Donation;
 using GAID.Application.Repositories.Page;
 using GAID.Application.Repositories.Partner;
 using GAID.Application.Repositories.Program;
 using GAID.Domain;
-using GAID.Domain.Models.User;
 using GAID.Shared;
 using Microsoft.AspNetCore.Identity;
 
@@ -11,10 +11,11 @@ namespace GAID.Application.Repositories;
 
 public class UnitOfWork : IUnitOfWork
 {
-    public UnitOfWork(AppDbContext dbContext, UserManager<Domain.Models.User.User> userManager)
+    public UnitOfWork(AppDbContext dbContext, UserManager<Domain.Models.User.User> userManager, UserContext userContext)
     {
         _dbContext = dbContext;
         _userManager = userManager;
+        _userContext = userContext;
     }
 
     private readonly AppDbContext _dbContext;
@@ -24,6 +25,7 @@ public class UnitOfWork : IUnitOfWork
     private PartnerRepository? _partnerRepository;
     private ProgramRepository? _programRepository;
     private PageRepository? _pageRepository;
+    private DonationRepository? _donationRepository;
 
     public AttachmentRepository AttachmentRepository
     {
@@ -45,7 +47,9 @@ public class UnitOfWork : IUnitOfWork
         _programRepository ??= new ProgramRepository(_dbContext, _userContext, _userManager);
 
     public PageRepository PageRepository =>
-        _pageRepository ??= new PageRepository(_dbContext, _userContext, _userManager);
+        _pageRepository ??= new PageRepository(_dbContext, _userContext, _userManager);    
+    public DonationRepository DonationRepository =>
+        _donationRepository ??= new DonationRepository(_dbContext, _userContext, _userManager);
 
 
     public async Task<bool> SaveChangesAsync(CancellationToken _ = default)

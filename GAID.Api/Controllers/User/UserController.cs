@@ -4,14 +4,13 @@ using GAID.Api.Dto.User.Request;
 using GAID.Api.Dto.User.Response;
 using GAID.Application.Attachment;
 using GAID.Application.Repositories;
-using GAID.Application.Repositories.User;
-using GAID.Domain.Models.Attachment;
 using GAID.Shared;
 using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using IAuthorizationService = GAID.Application.Repositories.User.IAuthorizationService;
+using WDA.Service.User;
+using IAuthorizationService = GAID.Application.Authorization.IAuthorizationService;
 
 
 namespace GAID.Api.Controllers.User;

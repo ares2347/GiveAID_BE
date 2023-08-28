@@ -26,6 +26,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="PayPal.Sdk.Checkout" Version="2.3.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
 
@@ -33,6 +34,10 @@
       <ProjectReference Include="..\GAID.Application\GAID.Application.csproj" />
       <ProjectReference Include="..\GAID.Domain\GAID.Domain.csproj" />
       <ProjectReference Include="..\GAID.Shared\GAID.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Dto\Payment\Request\" />
     </ItemGroup>
 
 </Project>

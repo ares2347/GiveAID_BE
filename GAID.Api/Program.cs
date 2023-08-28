@@ -1,7 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Mail;
-using DateOnlyTimeOnly.AspNet.Converters;
 using GAID.Api.Configuration;
 using GAID.Application.Attachment;
 using GAID.Application.Authorization;
@@ -9,7 +8,6 @@ using GAID.Application.Email;
 using GAID.Application.Repositories;
 using GAID.Domain;
 using GAID.Shared;
-using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -47,6 +45,7 @@ builder.Services
 builder.Services.ConfigurationAuthentication();
 builder.Services.ConfigureJwtToken();
 builder.Services.AddAuthorization();
+builder.Services.AddHttpClient();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
@@ -85,6 +84,35 @@ builder.Services.AddSwaggerGen(c =>
         Type = "string",
         Format = "date"
     });
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "JWTToken_Auth_API",
+        Version = "v1"
+    });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description =
+            "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] { }
+        }
+    });
 });
 
 var app = builder.Build();
@@ -101,5 +129,14 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+//config get file name in header
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add("Access-Control-Expose-Headers", "Content-Disposition");
+    context.Response.Headers.Add("x-frame-options", "DENY");
+    context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+    await next.Invoke();
+});
 
 app.Run();

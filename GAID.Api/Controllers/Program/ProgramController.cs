@@ -1,6 +1,4 @@
 using AutoMapper;
-using GAID.Api.Dto.Partner.Request;
-using GAID.Api.Dto.Partner.Response;
 using GAID.Api.Dto.Program.Request;
 using GAID.Api.Dto.Program.Response;
 using GAID.Application.Repositories;
@@ -59,7 +57,8 @@ public class ProgramController : ControllerBase
         try
         {
             var entity = _mapper.Map<Domain.Models.Program.Program>(request);
-            entity.ProgramThumbnailId = request.ProgramThumbnailId;
+            var attachment = await _unitOfWork.AttachmentRepository.GetById(request.ProgramThumbnailId, _);
+            if(attachment is not null) entity.ProgramThumbnail = attachment;
             entity.DonationReason = JsonConvert.SerializeObject(request.DonationReason);
             var result = await _unitOfWork.ProgramRepository.Create(entity);
             await _unitOfWork.SaveChangesAsync(_);
@@ -81,7 +80,8 @@ public class ProgramController : ControllerBase
         {
             var program = await _unitOfWork.ProgramRepository.GetById(programId, _);
             if (program is null) return NotFound();
-            program.ProgramThumbnailId = request.ProgramThumbnailId;
+            var attachment = await _unitOfWork.AttachmentRepository.GetById(request.ProgramThumbnailId, _);
+            if(attachment is not null) program.ProgramThumbnail = attachment;
             program.Name = request.Name;
             program.Description = request.Description;
             program.DonationInfo = request.DonationInfo;

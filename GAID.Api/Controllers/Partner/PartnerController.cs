@@ -2,11 +2,8 @@ using AutoMapper;
 using GAID.Api.Dto.Partner.Request;
 using GAID.Api.Dto.Partner.Response;
 using GAID.Application.Repositories;
-using GAID.Shared;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace GAID.Api.Controllers.Partner;
 
@@ -55,7 +52,8 @@ public class PartnerController : ControllerBase
         try
         {
             var entity = _mapper.Map<Domain.Models.Partner.Partner>(request);
-            entity.PartnerThumbnailId = request.PartnerThumbnail;
+            var attachment = await _unitOfWork.AttachmentRepository.GetById(request.PartnerThumbnailId, _);
+            if(attachment is not null) entity.PartnerThumbnail = attachment;
             var result = await _unitOfWork.PartnerRepository.Create(entity);
             await _unitOfWork.SaveChangesAsync(_);
             return Ok(_mapper.Map<PartnerDetailDto>(result));
@@ -79,7 +77,8 @@ public class PartnerController : ControllerBase
             partner.Email = request.Email;
             partner.Description = request.Description;
             // partner.Page = request.Page;
-            partner.PartnerThumbnailId = request.PartnerThumbnail;
+            var attachment = await _unitOfWork.AttachmentRepository.GetById(request.PartnerThumbnailId, _);
+            if(attachment is not null) partner.PartnerThumbnail = attachment;
             var result = await _unitOfWork.PartnerRepository.Update(partner);
             await _unitOfWork.SaveChangesAsync(_);
             return Ok(_mapper.Map<PartnerDetailDto>(result));

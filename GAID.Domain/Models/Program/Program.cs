@@ -24,4 +24,5 @@ public class Program : BaseEntity
     public List<Enrollment.Enrollment> Enrollments { get; set; } = new();
 
     [NotMapped] public decimal TotalDonation => Enrollments.Sum(x => x.Donations.Sum(y => y.Amount));
+    [NotMapped] public Enrollment.Enrollment? CurrentUserEnrollment { get; set; }
 }

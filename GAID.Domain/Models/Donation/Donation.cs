@@ -10,7 +10,7 @@ public class Donation : BaseEntity
     public string Remark { get; set; } = string.Empty;
     public decimal Amount { get; set; }
     public PaymentMethod Method { get; set; }
-    
+    public string PaypalOrderId { get; set; } = string.Empty;
     [ForeignKey("Enrollment")]
     public Guid EnrollmentId { get; set; }
     public Enrollment.Enrollment Enrollment { get; set; } = new();

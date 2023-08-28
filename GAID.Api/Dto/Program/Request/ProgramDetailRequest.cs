@@ -1,5 +1,3 @@
-using GAID.Domain.Models.Page;
-
 namespace GAID.Api.Dto.Program.Request;
 
 public class ProgramDetailRequest

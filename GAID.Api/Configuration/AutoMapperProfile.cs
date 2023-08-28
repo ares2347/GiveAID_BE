@@ -10,7 +10,6 @@ using GAID.Domain.Models.Attachment;
 using GAID.Domain.Models.Donation;
 using GAID.Domain.Models.Page;
 using GAID.Domain.Models.Partner;
-using GAID.Domain.Models.User;
 using Newtonsoft.Json;
 
 namespace GAID.Api.Configuration;

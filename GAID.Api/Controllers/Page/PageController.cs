@@ -3,7 +3,6 @@ using AutoMapper;
 using GAID.Api.Dto.Page.Request;
 using GAID.Api.Dto.Page.Response;
 using GAID.Application.Repositories;
-using GAID.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

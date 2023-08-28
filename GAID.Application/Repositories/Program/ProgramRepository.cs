@@ -1,5 +1,5 @@
+using System.Linq.Expressions;
 using GAID.Domain;
-using GAID.Domain.Models.Donation;
 using GAID.Domain.Models.Enrollment;
 using GAID.Shared;
 using Microsoft.AspNetCore.Identity;
@@ -12,16 +12,24 @@ public class ProgramRepository : BaseRepository<Domain.Models.Program.Program>
     private readonly UserContext _userContext;
     private readonly UserManager<Domain.Models.User.User> _userManager;
 
+    public override IQueryable<Domain.Models.Program.Program> Get(Expression<Func<Domain.Models.Program.Program, bool>>? expression, int? size, int? page)
+    {
+        return base.Get(expression, size, page).Include(x => x.ProgramThumbnail);
+    }
+
     public override async Task<Domain.Models.Program.Program?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         var res = await DbContext.Programs
+            .Include(x => x.Partner)
             .Include(x => x.Enrollments)
             .ThenInclude(y => y.Donations)
             .Include(x => x.Page)
             .Include(x => x.CreatedBy)
             .Include(x => x.ModifiedBy)
-            .FirstOrDefaultAsync(x => x.PartnerId == id && !x.IsDelete,
+            .FirstOrDefaultAsync(x => x.ProgramId == id && !x.IsDelete,
                 cancellationToken);
+        if (res is not null)
+            res.CurrentUserEnrollment = res.Enrollments.FirstOrDefault(x => x.CreatedBy is not null && x.CreatedBy.Id == _userContext.UserId);
         return res;
     }
 
@@ -38,7 +46,7 @@ public class ProgramRepository : BaseRepository<Domain.Models.Program.Program>
         return program;
     }
     
-    public async Task<Domain.Models.Program.Program?> AddDonation(Guid programId, Donation donation, CancellationToken cancellationToken)
+    public async Task<Domain.Models.Program.Program?> AddDonation(Guid programId, Domain.Models.Donation.Donation donation, CancellationToken cancellationToken)
     {
         var program = await GetById(programId, cancellationToken);
         var enrollment = program?.Enrollments.FirstOrDefault(x => x.CreatedBy is not null && x.CreatedBy.Id == _userContext.UserId);
