@@ -1,14 +1,17 @@
 ﻿using AutoMapper;
 using GAID.Api.Dto.Attachment;
+using GAID.Api.Dto.Enrollment.Response;
 using GAID.Api.Dto.Page.Request;
 using GAID.Api.Dto.Page.Response;
 using GAID.Api.Dto.Partner.Request;
 using GAID.Api.Dto.Partner.Response;
+using GAID.Api.Dto.Payment.Response;
 using GAID.Api.Dto.Program.Request;
 using GAID.Api.Dto.Program.Response;
 using GAID.Api.Dto.User.Response;
 using GAID.Domain.Models.Attachment;
 using GAID.Domain.Models.Donation;
+using GAID.Domain.Models.Enrollment;
 using GAID.Domain.Models.Page;
 using GAID.Domain.Models.Partner;
 using GAID.Domain.Models.User;
@@ -53,6 +56,8 @@ public class AutoMapperProfile : Profile
             .ForMember(x => x.ModifiedByName, opt => opt.MapFrom(src => src.ModifiedBy.FullName));
         CreateMap<PageDetailRequest, Page>();
 
+        CreateMap<Enrollment, EnrollmentListingDto>();
         CreateMap<DonationDetailRequest, Donation>();
+        CreateMap<PaymentCreateRequest, Donation>();
     }
 }

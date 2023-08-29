@@ -1,12 +1,13 @@
 using System.Net;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using GAID.Shared;
 
 namespace GAID.Application.Attachment;
 
 public class AttachmentService : IAttachmentService
 {
-    public async Task<string> SaveFileAsync(Stream file, string fileName)
+    public async Task<string> SaveFileAsync(Stream file, string fileName, string contentType)
     {
         var container = new BlobContainerClient(AppSettings.Instance.AzureStorage.ConnectionString,
             "attachments");
@@ -14,7 +15,7 @@ public class AttachmentService : IAttachmentService
         {
             var blob = container.GetBlobClient(fileName);
             file.Position = 0;
-            await blob.UploadAsync(file);
+            await blob.UploadAsync(file, new BlobHttpHeaders { ContentType = contentType });
             var fileUrl = blob.Uri.AbsoluteUri;
             return fileUrl;
         }

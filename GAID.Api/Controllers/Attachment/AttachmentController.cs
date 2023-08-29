@@ -40,7 +40,7 @@ public class AttachmentController : ControllerBase
         {
             var attachmentId = NewId.NextGuid();
             var filePath =
-                await _attachmentService.SaveFileAsync(file.OpenReadStream(), attachmentId.ToString());
+                await _attachmentService.SaveFileAsync(file.OpenReadStream(), attachmentId.ToString(), file.ContentType);
             var user = await _userManager.FindByIdAsync(_userContext.UserId.ToString());
             var attachment = new Domain.Models.Attachment.Attachment
             {

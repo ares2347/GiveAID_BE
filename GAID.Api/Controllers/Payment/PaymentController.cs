@@ -118,7 +118,7 @@ public class PaymentController : ControllerBase
                 await _unitOfWork.SaveChangesAsync(_);
                 return Ok(response.ResponseBody);
             }
-
+            await _unitOfWork.SaveChangesAsync(_);
             return BadRequest(response.ResponseBody);
         }
         catch (Exception e)
