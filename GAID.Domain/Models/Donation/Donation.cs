@@ -9,7 +9,7 @@ public class Donation : BaseEntity
     public DonationStatus Status { get; set; }
     public string Remark { get; set; } = string.Empty;
     public decimal Amount { get; set; }
-    public PaymentMethod Method { get; set; }
+    public PaymentMethod Method { get; set; } = PaymentMethod.Paypal;
     public string PaypalOrderId { get; set; } = string.Empty;
     [ForeignKey("Enrollment")]
     public Guid EnrollmentId { get; set; }

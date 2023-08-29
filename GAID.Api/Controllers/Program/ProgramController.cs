@@ -114,19 +114,19 @@ public class ProgramController : ControllerBase
         }
     }
     
-    [HttpPut("donate/{programId:guid}")]
-    public async Task<ActionResult<ProgramDetailDto>> DonateProgram([FromRoute] Guid programId, DonationDetailRequest request, CancellationToken _ = default)
-    {
-        try
-        {
-            var donation = _mapper.Map<Donation>(request);
-            var result = await _unitOfWork.ProgramRepository.AddDonation(programId, donation, _);
-            await _unitOfWork.SaveChangesAsync(_);
-            return Ok(_mapper.Map<ProgramDetailDto>(result));
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
-    }
+    // [HttpPut("donate/{programId:guid}")]
+    // public async Task<ActionResult<ProgramDetailDto>> DonateProgram([FromRoute] Guid programId, DonationDetailRequest request, CancellationToken _ = default)
+    // {
+    //     try
+    //     {
+    //         var donation = _mapper.Map<Donation>(request);
+    //         var result = await _unitOfWork.ProgramRepository.AddDonation(programId, donation, _);
+    //         await _unitOfWork.SaveChangesAsync(_);
+    //         return Ok(_mapper.Map<ProgramDetailDto>(result));
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         return BadRequest(e.Message);
+    //     }
+    // }
 }
