@@ -112,7 +112,7 @@ public class PaymentController : ControllerBase
             var response =
                 await _client.ExecuteAsync<OrdersCreateRequest, OrderRequest, Order>(createOrderRequest, accessToken,
                     _);
-            if (response.ResponseStatusCode == HttpStatusCode.OK)
+            if (response.ResponseStatusCode == HttpStatusCode.Created)
             {
                 donation.PaypalOrderId = response.ResponseBody?.Id ?? string.Empty;
                 await _unitOfWork.SaveChangesAsync(_);
