@@ -9,6 +9,7 @@ public class ProgramListingDto
     public string Name { get; set; } = string.Empty;
     public decimal Target { get; set; }
     public DateOnly EndDate { get; set; }
+    public string Status => EndDate >= DateOnly.FromDateTime(DateTime.UtcNow) ? "Opened" : "Closed";
     public Guid PartnerId { get; set; }
     public PartnerListingDto? Partner { get; set; }
     public AttachmentDetailDto ProgramThumbnail { get; set; } = new();

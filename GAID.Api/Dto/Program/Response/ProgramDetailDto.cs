@@ -15,6 +15,7 @@ public class ProgramDetailDto
     public DateOnly EndDate { get; set; }
     public PageDetailDto Page { get; set; } = new();
     public decimal TotalDonation { get; set; }
+    public string Status => EndDate >= DateOnly.FromDateTime(DateTime.UtcNow) ? "Opened" : "Closed";
     public AttachmentDetailDto ProgramThumbnail { get; set; } = new();
     public List<EnrollmentListingDto> Enrollments { get; set; } = new();
     public EnrollmentListingDto CurrentUserEnrollment { get; set; } = new();
