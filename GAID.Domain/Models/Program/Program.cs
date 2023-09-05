@@ -11,6 +11,8 @@ public class Program : BaseEntity
     public string DonationReason { get; set; } = string.Empty;
     public decimal Target { get; set; }
     public DateOnly EndDate { get; set; }
+    public bool IsClosed { get; set; } = false;
+    public string ClosedReason { get; set; } = string.Empty;
     
     [ForeignKey("ProgramThumbnail")]
     public Guid ProgramThumbnailId { get; set; }

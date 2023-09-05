@@ -1,3 +1,4 @@
+using GAID.Application.Repositories.Program;
 using GAID.Shared;
 using Hangfire;
 using Hangfire.Dashboard;
@@ -29,7 +30,8 @@ public static class Hangfire
     
     public static void RegisterRecurringJob()
     {
-        
+        RecurringJob
+            .AddOrUpdate<ProgramRepository>(x => x.CloseProgramDueDate(), CronExpression.CRON_EXP_EVERY_DAY_AT_MIDNIGHT_UTC);
     }
 }
 

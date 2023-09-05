@@ -55,7 +55,20 @@ public class ProgramRepository : BaseRepository<Domain.Models.Program.Program>
         enrollment?.Donations.Add(donation);
         return program;
     }
-    
+
+    public async Task CloseProgramDueDate()
+    {
+        var duePrograms = await DbContext.Programs
+            .Where(x => x.EndDate < DateOnly.FromDateTime(DateTimeOffset.UtcNow.DateTime) && !x.IsDelete).ToListAsync();
+        foreach (var program in duePrograms)
+        {
+            if (program.IsClosed) continue;
+            program.IsClosed = true;
+            program.ClosedReason = "Program has been closed by end date.";
+        }
+        DbContext.Programs.UpdateRange(duePrograms);
+        await DbContext.SaveChangesAsync();
+    }
     public ProgramRepository(AppDbContext dbContext, UserContext userContext, UserManager<Domain.Models.User.User> userManager) : base(dbContext, userContext, userManager)
     {
         _userContext = userContext;

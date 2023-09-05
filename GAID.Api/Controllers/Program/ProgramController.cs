@@ -1,4 +1,5 @@
 using AutoMapper;
+using GAID.Api.Dto.Program;
 using GAID.Api.Dto.Program.Request;
 using GAID.Api.Dto.Program.Response;
 using GAID.Application.Repositories;
@@ -105,6 +106,27 @@ public class ProgramController : ControllerBase
         try
         {
             var result = await _unitOfWork.ProgramRepository.AddEnrollment(programId, _);
+            await _unitOfWork.SaveChangesAsync(_);
+            return Ok(_mapper.Map<ProgramDetailDto>(result));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+    
+    [Authorize]
+    [HttpPut("close/{programId:guid}")]
+    public async Task<ActionResult<ProgramDetailDto>> CloseProgram([FromRoute] Guid programId, CloseProgramRequest request, CancellationToken _ = default)
+    {
+        //TODO: Trigger email notifications
+        try
+        {
+            var result = await _unitOfWork.ProgramRepository.GetById(programId, _);
+            if (result is null) return NotFound("Program not found");
+            if (result.IsClosed) return BadRequest("Program has already been closed.");
+            result.IsClosed = true;
+            result.ClosedReason = request.CloseReason;
             await _unitOfWork.SaveChangesAsync(_);
             return Ok(_mapper.Map<ProgramDetailDto>(result));
         }
