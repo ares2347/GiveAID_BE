@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        font-family: Poppins, sans-serif;
+        color: #8b8b8b;
+        background-color: #fff5ed;
+      "
+    >
+      <div style="display: flex; flex-direction: row; height: 100px">
+        <div style="background: #158f67; opacity: 0.5; flex: 1"></div>
+        <div style="background: #e9b929; opacity: 0.5; flex: 1"></div>
+        <div style="background: #fd4c42; opacity: 0.5; flex: 1"></div>
+        <div style="background: #396dc4; opacity: 0.5; flex: 1"></div>
+        <img
+          src="https://sem33proj.blob.core.windows.net/attachments/a4370000-3a9b-000d-7d3c-08dbadbe1ad8"
+          alt=""
+          style="position: absolute; width: 80px; height: 80px; margin: 10px"
+        />
+      </div>
+      <div style="padding: 1% 10%">
+        <h2 style="color: #fd645b">Dear [[Recipient_Name]],</h2>
+        <p>
+          We hope this message finds you in good health and high spirits. We
+          wanted to take a moment to share some important news regarding our
+          charity program [[Program_Name]] at Give-AID.
+        </p>
+        <p>
+          We would like to take this opportunity to express our deepest
+          gratitude to each and every one of you for your unwavering support,
+          dedication, and commitment to our cause throughout the duration of the
+          program. Your generosity and enthusiasm have been truly inspiring and
+          have made a profound impact on the lives of countless individuals and
+          communities.
+        </p>
+        <p>Here's the final result of the program:</p>
+        <table style="border: #8b8b8b 1px solid; width: 50%">
+          <tr style="display: flex; gap: 10px; padding: 8px">
+            <th style="width: 200px; text-align: start"><b>Partner</b></th>
+            <td style="flex: 1">[[Partner]]</td>
+          </tr>
+          <tr style="display: flex; gap: 10px; padding: 8px">
+            <th style="width: 200px; text-align: start"><b>Program</b></th>
+            <td style="flex: 1">[[Program]]</td>
+          </tr>
+          <tr style="display: flex; gap: 10px; padding: 8px">
+            <th style="width: 200px; text-align: start"><b>Total Donation</b></th>
+            <td style="flex: 1">[[Donation_Amount]]</td>
+          </tr>
+          <tr style="display: flex; gap: 10px; padding: 8px">
+            <th style="width: 200px; text-align: start"><b>Duration</b></th>
+            <td style="flex: 1">[[Donation_Duration]]</td>
+          </tr>
+          <tr style="display: flex; gap: 10px; padding: 8px">
+            <th style="width: 200px; text-align: start"><b>End Date</b></th>
+            <td style="flex: 1">[[Donation_End_Date]]</td>
+          </tr>
+        </table>
+        <p>
+          While our charity program may be coming to a close, please know that
+          the work we have accomplished together will continue to ripple through
+          the lives of those we've touched. Your contributions have left an
+          indelible mark of kindness and compassion on the world. While one
+          chapter may be closing, we look forward to the exciting opportunities
+          and challenges that lie ahead as we continue our mission to make the
+          world a better place.
+        </p>
+        <p>
+          If you have any questions or would like to connect with us further,
+          please feel free to reach out at
+          <a href="[[Program_Url]]" style="font-style: italic"
+            >[[Program_Name]]_[[Partner_Name]]</a
+          >
+        </p>
+        <p>
+          Thank you once again for choosing to be a part of Give-AID. We look
+          forward to working alongside you and creating a brighter future for
+          all.
+        </p>
+        <p>
+          <b><i>With heartfelt thanks and warm regards,</i></b>
+        </p>
+        <p>
+          <b><i>[[Partner_Name]]</i></b>
+        </p>
+        <p>
+          <b><i>Give-AID</i></b>
+        </p>
+        <p>
+          <b><i>[[Home_Url]]</i></b>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -10,5 +10,7 @@ public class EmailTemplate
 
 public enum EmailTemplateType
 {
-
+    DonationUserTemplate,
+    EnrollmentUserTemplate,
+    ProgramCloseTemplate
 }

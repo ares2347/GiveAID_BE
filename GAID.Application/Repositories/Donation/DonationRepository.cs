@@ -16,6 +16,7 @@ public class DonationRepository : BaseRepository<Domain.Models.Donation.Donation
         var res = await DbContext.Donations
             .Include(x => x.Enrollment)
             .ThenInclude(y => y.Program)
+            .ThenInclude(z => z.Partner)
             .Include(x => x.CreatedBy)
             .Include(x => x.ModifiedBy)
             .FirstOrDefaultAsync(x => x.DonationId == id && !x.IsDelete,

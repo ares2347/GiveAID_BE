@@ -2,8 +2,11 @@ using System.Globalization;
 using System.Net;
 using AutoMapper;
 using GAID.Api.Dto.Payment.Response;
+using GAID.Application.Email;
 using GAID.Application.Repositories;
 using GAID.Domain.Models.Donation;
+using GAID.Domain.Models.Email;
+using GAID.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -21,15 +24,19 @@ public class PaymentController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly UserContext _userContext;
+    private readonly IEmailService _emailService;
     private readonly PayPalHttpClient _client;
     static string _clientId = "ATKKXwxgR8fDrgbPBYs0gqU0ZTyTK6sCHOMqGng-eFT798ND8M8Cw3VK0dGx5lP6Vu0pvsjeknvfem0i";
     static string _clientSecret = "ECqWkEl1cA-A8-Khp9FQRELI9rGTZcxVyiZpazLf975EHwYCGQdWOhyzYJOX_eIRFX1unfe4DkBiyQaI";
 
 
-    public PaymentController(IHttpClientFactory clientFactory, IMapper mapper, IUnitOfWork unitOfWork)
+    public PaymentController(IHttpClientFactory clientFactory, IMapper mapper, IUnitOfWork unitOfWork, UserContext userContext, IEmailService emailService)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
+        _userContext = userContext;
+        _emailService = emailService;
         var httpClient = clientFactory.CreateClient();
         var options = new OptionsWrapper<PayPalOptions>(
             new PayPalOptions
@@ -65,8 +72,8 @@ public class PaymentController : ControllerBase
                 {
                     BrandName = program.Name,
                     LandingPage = ELandingPage.Billing,
-                    CancelUrl = $"https://www.example.com/donation/{result.DonationId}",
-                    ReturnUrl = $"https://www.example.com/donation/{result.DonationId}",
+                    CancelUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/donation/{result.DonationId}",
+                    ReturnUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/donation/{result.DonationId}",
                     UserAction = EUserAction.Continue,
                     ShippingPreference = EShippingPreference.NoShipping,
                 },
@@ -143,6 +150,27 @@ public class PaymentController : ControllerBase
             {
                 donation.Status = DonationStatus.Completed;
                 await _unitOfWork.SaveChangesAsync(_);
+                var subjectReplacements = new Dictionary<string, string>{};
+                var bodyReplacements = new Dictionary<string, string>
+                {
+                    { "Recipient_Name", $"{_userContext.FullName}" },
+                    { "Donation_Id", $"{donation.DonationId}"},
+                    { "Enrollment_Id", $"{donation.EnrollmentId}"},
+                    { "Paypal_Order_Id", $"{donation.PaypalOrderId}"},
+                    { "Program_Name", $"{donation.Enrollment?.Program.Name}" },
+                    { "Program", $"{donation.Enrollment?.Program.Name}" },
+                    { "Partner_Name", $"{donation.Enrollment?.Program?.Partner?.Name}" },
+                    { "Partner", $"{donation.Enrollment?.Program?.Partner?.Name}" },
+                    { "Donation_Amount", $"{donation.Amount}" },
+                    { "Donation_Reason", $"{donation.Reason}" },
+                    { "Payment_Method", "Paypal" },
+                    { "Time Stamp", $"{capture.CreateTime}"},
+                    { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}"}
+                };
+                if (_userContext.Email is not null)
+                    await _emailService.SendEmailNotification(EmailTemplateType.DonationUserTemplate, _userContext.Email, subjectReplacements, bodyReplacements, _: _);
+
+                //end of send email
             }
 
             return Ok(capture);

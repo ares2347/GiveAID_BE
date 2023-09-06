@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        font-family: Poppins, sans-serif;
+        color: #8b8b8b;
+        background-color: #fff5ed;
+      "
+    >
+      <div style="display: flex; flex-direction: row; height: 100px">
+        <div style="background: #158f67; opacity: 0.5; flex: 1"></div>
+        <div style="background: #e9b929; opacity: 0.5; flex: 1"></div>
+        <div style="background: #fd4c42; opacity: 0.5; flex: 1"></div>
+        <div style="background: #396dc4; opacity: 0.5; flex: 1"></div>
+        <img
+          src="https://sem33proj.blob.core.windows.net/attachments/a4370000-3a9b-000d-7d3c-08dbadbe1ad8"
+          alt=""
+          style="position: absolute; width: 80px; height: 80px; margin: 10px"
+        />
+      </div>
+      <div style="padding: 1% 10%;">
+        <h2 style="color: #fd645b">Dear [[Recipient_Name]],</h2>
+        <p>
+          We hope this message finds you well. We are thrilled to express our
+          heartfelt gratitude for your recent enrollment in our NGO
+          (Non-Governmental Organization) program: <b>[[Program_Name]]</b>,
+          organized by <b>[[Partner_Name]]</b>. Your commitment to making a
+          positive impact on the world is truly inspiring, and we're excited to
+          have you as part of our community.
+        </p>
+        <p>
+          At <b>Give-AID</b>, we believe that change begins with individuals like you
+          who are willing to take action and work towards a better future. Your
+          decision to join our program demonstrates your dedication to the
+          causes we support, whether it's environmental conservation, social
+          justice, healthcare access, or any other issue close to your heart.
+        </p>
+        <p>Here's what you can expect as a member of our program:</p>
+        <p>
+          1. <b>Engaging Projects</b>: We will keep you updated on our ongoing
+          projects and opportunities to get involved. Your participation will
+          help us make a tangible difference in the lives of those in need.
+        </p>
+        <p>
+          2. <b>Community Support</b>: Connect with like-minded individuals who
+          share your passion for creating a better world. Our community is a
+          source of inspiration, collaboration, and encouragemen
+        </p>
+        <p>
+          3. <b>Impact Updates</b>: You'll receive regular updates on the impact
+          of your contributions, ensuring you can see the real difference you're
+          making.
+        </p>
+        <p>
+          We can't wait to see the positive influence you will bring to our NGO
+          program. Your involvement is a testament to your dedication to making
+          the world a better place, and together, we can achieve remarkable
+          things.
+        </p>
+        <p>
+          For more information on this program, please follow this link:
+          <a href="[[Program_Url]]" style="font-style: italic"
+            >[[Program_Name]]_[[Partner_Name]]</a
+          >
+        </p>
+        <p>
+          Thank you once again for choosing to be a part of Give-AID. We look
+          forward to working alongside you and creating a brighter future for
+          all.
+        </p>
+        <p><b><i>Warm regards,</i></b></p>
+        <p><b><i>[[Partner_Name]]</i></b></p>
+        <p><b><i>Give-AID</i></b></p>
+        <p><b><i>[[Home_Url]]</i></b></p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,4 +1,5 @@
-﻿using GAID.Application.Repositories.Attachment;
+﻿using GAID.Application.Email;
+using GAID.Application.Repositories.Attachment;
 using GAID.Application.Repositories.Donation;
 using GAID.Application.Repositories.Page;
 using GAID.Application.Repositories.Partner;
@@ -11,16 +12,18 @@ namespace GAID.Application.Repositories;
 
 public class UnitOfWork : IUnitOfWork
 {
-    public UnitOfWork(AppDbContext dbContext, UserManager<Domain.Models.User.User> userManager, UserContext userContext)
+    public UnitOfWork(AppDbContext dbContext, UserManager<Domain.Models.User.User> userManager, UserContext userContext, IEmailService emailService)
     {
         _dbContext = dbContext;
         _userManager = userManager;
         _userContext = userContext;
+        _emailService = emailService;
     }
 
     private readonly AppDbContext _dbContext;
     private readonly UserManager<Domain.Models.User.User> _userManager;
     private readonly UserContext _userContext;
+    private readonly IEmailService _emailService;
     private AttachmentRepository? _attachmentRepository;
     private PartnerRepository? _partnerRepository;
     private ProgramRepository? _programRepository;
@@ -44,7 +47,7 @@ public class UnitOfWork : IUnitOfWork
         _partnerRepository ??= new PartnerRepository(_dbContext, _userContext, _userManager);
 
     public ProgramRepository ProgramRepository =>
-        _programRepository ??= new ProgramRepository(_dbContext, _userContext, _userManager);
+        _programRepository ??= new ProgramRepository(_dbContext, _userContext, _userManager, _emailService);
 
     public PageRepository PageRepository =>
         _pageRepository ??= new PageRepository(_dbContext, _userContext, _userManager);    

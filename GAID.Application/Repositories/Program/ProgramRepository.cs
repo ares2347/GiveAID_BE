@@ -1,5 +1,7 @@
 using System.Linq.Expressions;
+using GAID.Application.Email;
 using GAID.Domain;
+using GAID.Domain.Models.Email;
 using GAID.Domain.Models.Enrollment;
 using GAID.Shared;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +13,7 @@ public class ProgramRepository : BaseRepository<Domain.Models.Program.Program>
 {
     private readonly UserContext _userContext;
     private readonly UserManager<Domain.Models.User.User> _userManager;
+    private readonly IEmailService _emailService;
 
     public override IQueryable<Domain.Models.Program.Program> Get(Expression<Func<Domain.Models.Program.Program, bool>>? expression, int? size, int? page)
     {
@@ -65,14 +68,31 @@ public class ProgramRepository : BaseRepository<Domain.Models.Program.Program>
             if (program.IsClosed) continue;
             program.IsClosed = true;
             program.ClosedReason = "Program has been closed by end date.";
+            var subjectReplacements = new Dictionary<string, string>{};
+            var bodyReplacements = new Dictionary<string, string>
+            {
+                { "Recipient_Name", $"{_userContext.FullName} " },
+                { "Program", $"{program?.Name}" },
+                { "Program_Name", $"{program?.Name}" },
+                { "Partner", $"{program?.Partner?.Name}" },
+                { "Partner_Name", $"{program?.Partner?.Name}" },
+                { "Donation_Amount", $"{program?.TotalDonation}" },
+                { "Donation_Duration", $"{program?.EndDate.DayNumber - DateOnly.FromDateTime(program!.CreatedAt!.Value.DateTime).DayNumber}" },
+                { "Donation_End_Date", $"{program?.EndDate}" },
+                { "Program_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{program?.ProgramId}" },
+                { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}"}
+            };
+            if (_userContext.Email is not null)
+                await _emailService.SendEmailNotification(EmailTemplateType.ProgramCloseTemplate, _userContext.Email, subjectReplacements, bodyReplacements);
         }
         DbContext.Programs.UpdateRange(duePrograms);
         await DbContext.SaveChangesAsync();
     }
-    public ProgramRepository(AppDbContext dbContext, UserContext userContext, UserManager<Domain.Models.User.User> userManager) : base(dbContext, userContext, userManager)
+    public ProgramRepository(AppDbContext dbContext, UserContext userContext, UserManager<Domain.Models.User.User> userManager, IEmailService emailService) : base(dbContext, userContext, userManager)
     {
         _userContext = userContext;
         _userManager = userManager;
+        _emailService = emailService;
     }
     
 }

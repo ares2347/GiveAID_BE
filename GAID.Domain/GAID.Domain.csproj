@@ -16,7 +16,18 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Models\Email\BuiltInTemplates\" />
+      <None Remove="Models\Email\BuiltInTemplates\DonationUserTemplate.txt" />
+      <EmbeddedResource Include="Models\Email\BuiltInTemplates\DonationUserTemplate.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Models\Email\BuiltInTemplates\EnrollmentUserTemplate.txt" />
+      <EmbeddedResource Include="Models\Email\BuiltInTemplates\EnrollmentUserTemplate.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Models\Email\BuiltInTemplates\ProgramCloseTemplate.txt" />
+      <EmbeddedResource Include="Models\Email\BuiltInTemplates\ProgramCloseTemplate.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 
 </Project>

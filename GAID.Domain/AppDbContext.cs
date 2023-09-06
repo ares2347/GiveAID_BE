@@ -46,6 +46,7 @@ public class AppDbContext : IdentityDbContext<User, Role,  Guid>
             .HasData(BuiltInData.BuiltInData.SeedRoleData());
         modelBuilder.Entity<IdentityUserRole<Guid>>()
             .HasData(BuiltInData.BuiltInData.SeedUserRoles());
+        modelBuilder.Entity<EmailTemplate>().HasData(BuiltInData.BuiltInData.SeedEmailTemplates());
         
     }
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

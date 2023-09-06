@@ -41,7 +41,5 @@ public sealed class Smtp
 
 public sealed class ClientConfiguration
 {
-    public string CreateTicketBaseUrl { get; set; }
-    public string CloseTicketBaseUrl { get; set; }
     public string SiteBaseUrl { get; set; }
 }

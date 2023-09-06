@@ -1,3 +1,4 @@
+using GAID.Domain.Models.Email;
 using GAID.Domain.Models.User;
 using Microsoft.AspNetCore.Identity;
 
@@ -8,6 +9,7 @@ public static class BuiltInData
     private const string UserFullName = "System Admin";
     private const string UserEmail = "admin@email.com";
     private const string UserIdentifier = "admin";
+
     public static List<User> SeedUserData() => new List<User>
     {
         new User
@@ -47,6 +49,31 @@ public static class BuiltInData
         }
     };
 
+    public static List<EmailTemplate> SeedEmailTemplates() => new()
+    {
+        new EmailTemplate
+        {
+            EmailTemplateId = Guid.Parse("30000000-0000-0000-0000-000000000001"),
+            EmailTemplateType = EmailTemplateType.DonationUserTemplate,
+            Subject = "[Give-AID] Your Generosity is Changing Lives - Thank You for Your Donation!",
+            Body = GetText($"{AppContext.BaseDirectory}/Models/Email/BuiltInTemplates/DonationUserTemplate.txt")
+        },
+        new EmailTemplate
+        {
+            EmailTemplateId = Guid.Parse("30000000-0000-0000-0000-000000000002"),
+            EmailTemplateType = EmailTemplateType.EnrollmentUserTemplate,
+            Subject = "[Give-AID] Thank You for Enrolling in Our NGO Program!",
+            Body = GetText($"{AppContext.BaseDirectory}/Models/Email/BuiltInTemplates/EnrollmentUserTemplate.txt")
+        },
+        new EmailTemplate
+        {
+            EmailTemplateId = Guid.Parse("30000000-0000-0000-0000-000000000003"),
+            EmailTemplateType = EmailTemplateType.ProgramCloseTemplate,
+            Subject = "[Give-AID] Important Update: Closure of Our Charity Program",
+            Body = GetText($"{AppContext.BaseDirectory}/Models/Email/BuiltInTemplates/ProgramCloseTemplate.txt")
+        }
+    };
+
     public static List<IdentityUserRole<Guid>> SeedUserRoles() => new List<IdentityUserRole<Guid>>
     {
         new IdentityUserRole<Guid>
@@ -55,4 +82,13 @@ public static class BuiltInData
             UserId = Guid.Parse("10000000-0000-0000-0000-000000000001")
         }
     };
+
+    #region private method
+
+    private static string GetText(string filePath)
+    {
+        return File.ReadAllText(filePath);
+    }
+
+    #endregion
 }

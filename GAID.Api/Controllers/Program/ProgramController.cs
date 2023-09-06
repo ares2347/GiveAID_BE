@@ -2,8 +2,11 @@ using AutoMapper;
 using GAID.Api.Dto.Program;
 using GAID.Api.Dto.Program.Request;
 using GAID.Api.Dto.Program.Response;
+using GAID.Application.Email;
 using GAID.Application.Repositories;
 using GAID.Domain.Models.Donation;
+using GAID.Domain.Models.Email;
+using GAID.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -16,11 +19,15 @@ public class ProgramController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IEmailService _emailService;
+    private readonly UserContext _userContext;
 
-    public ProgramController(IUnitOfWork unitOfWork, IMapper mapper)
+    public ProgramController(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, UserContext userContext)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _emailService = emailService;
+        _userContext = userContext;
     }
 
     [HttpGet]
@@ -107,6 +114,19 @@ public class ProgramController : ControllerBase
         {
             var result = await _unitOfWork.ProgramRepository.AddEnrollment(programId, _);
             await _unitOfWork.SaveChangesAsync(_);
+            var subjectReplacements = new Dictionary<string, string>{};
+            var bodyReplacements = new Dictionary<string, string>
+            {
+                { "Recipient_Name", $"{_userContext.FullName} " },
+                { "Program_Name", $"{result?.Name}" },
+                { "Partner_Name", $"{result?.Partner?.Name}" },
+                { "Program_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{programId}" },
+                { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}"}
+            };
+            if (_userContext.Email is not null)
+                await _emailService.SendEmailNotification(EmailTemplateType.EnrollmentUserTemplate, _userContext.Email, subjectReplacements, bodyReplacements, _: _);
+
+            //end of send email
             return Ok(_mapper.Map<ProgramDetailDto>(result));
         }
         catch (Exception e)
@@ -128,6 +148,24 @@ public class ProgramController : ControllerBase
             result.IsClosed = true;
             result.ClosedReason = request.CloseReason;
             await _unitOfWork.SaveChangesAsync(_);
+            var subjectReplacements = new Dictionary<string, string>{};
+            var bodyReplacements = new Dictionary<string, string>
+            {
+                { "Recipient_Name", $"{_userContext.FullName} " },
+                { "Program", $"{result?.Name}" },
+                { "Program_Name", $"{result?.Name}" },
+                { "Partner", $"{result?.Partner?.Name}" },
+                { "Partner_Name", $"{result?.Partner?.Name}" },
+                { "Donation_Amount", $"{result?.TotalDonation}" },
+                { "Donation_Duration", $"{result?.EndDate.DayNumber - DateOnly.FromDateTime(result!.CreatedAt!.Value.DateTime).DayNumber}" },
+                { "Donation_End_Date", $"{result?.EndDate}" },
+                { "Program_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{programId}" },
+                { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}"}
+            };
+            if (_userContext.Email is not null)
+                await _emailService.SendEmailNotification(EmailTemplateType.ProgramCloseTemplate, _userContext.Email, subjectReplacements, bodyReplacements, _: _);
+
+            //end of send email
             return Ok(_mapper.Map<ProgramDetailDto>(result));
         }
         catch (Exception e)
@@ -135,20 +173,4 @@ public class ProgramController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
-    // [HttpPut("donate/{programId:guid}")]
-    // public async Task<ActionResult<ProgramDetailDto>> DonateProgram([FromRoute] Guid programId, DonationDetailRequest request, CancellationToken _ = default)
-    // {
-    //     try
-    //     {
-    //         var donation = _mapper.Map<Donation>(request);
-    //         var result = await _unitOfWork.ProgramRepository.AddDonation(programId, donation, _);
-    //         await _unitOfWork.SaveChangesAsync(_);
-    //         return Ok(_mapper.Map<ProgramDetailDto>(result));
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return BadRequest(e.Message);
-    //     }
-    // }
 }

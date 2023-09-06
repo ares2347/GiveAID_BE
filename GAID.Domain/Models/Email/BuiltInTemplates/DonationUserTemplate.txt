@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        font-family: Poppins, sans-serif;
+        color: #8b8b8b;
+        background-color: #fff5ed;
+      "
+    >
+      <div style="display: flex; flex-direction: row; height: 100px">
+        <div style="background: #158f67; opacity: 0.5; flex: 1"></div>
+        <div style="background: #e9b929; opacity: 0.5; flex: 1"></div>
+        <div style="background: #fd4c42; opacity: 0.5; flex: 1"></div>
+        <div style="background: #396dc4; opacity: 0.5; flex: 1"></div>
+        <img
+          src="https://sem33proj.blob.core.windows.net/attachments/a4370000-3a9b-000d-7d3c-08dbadbe1ad8"
+          alt=""
+          style="position: absolute; width: 80px; height: 80px; margin: 10px"
+        />
+      </div>
+      <div style="padding: 1% 10%">
+        <h2 style="color: #fd645b">Dear [[Recipient_Name]],</h2>
+        <p>
+          I hope this message finds you well. We wanted to take a moment to
+          express our heartfelt gratitude for your recent donation to Give-AID.
+          Your generosity is making a significant impact on the lives of those
+          we serve, and we couldn't be more thankful for your support.
+        </p>
+        <p>
+          Your contribution helps us continue our mission and work towards the
+          positive change we envision. Whether it's providing essential
+          resources to underserved communities, funding vital research, or
+          championing a cause close to your heart, your donation plays a vital
+          role in our efforts.
+        </p>
+        <p>Here's your donation information:</p>
+        <table style="border: #8b8b8b 1px solid; width: 50%;">
+          <tr style="display: flex; gap: 10px; padding: 8px;">
+            <th style="width: 200px; text-align: start;"><b>Donation Reference</b></th>
+            <td style="flex: 1">[[Donation_Id]]</td>
+          </tr>
+          <tr style="display: flex; gap: 10px; padding: 8px;">
+            <th style="width: 200px; text-align: start;"><b>Enrollment Reference</b></th>
+            <td style="flex: 1">[[Enrollment_Id]]</td>
+          </tr>
+          <tr style="display: flex; gap: 10px; padding: 8px;">
+            <th style="width: 200px; text-align: start;"><b>Paypal Reference</b></th>
+            <td style="flex: 1">[[Paypal_Order_Id]]</td>
+          </tr>
+          <tr style="display: flex; gap: 10px; padding: 8px;">
+            <th style="width: 200px; text-align: start;"><b>Partner</b></th>
+            <td style="flex: 1">[[Partner]]</td>
+          </tr>
+          <tr style="display: flex; gap: 10px; padding: 8px;">
+            <th style="width: 200px; text-align: start;"><b>Program</b></th>
+            <td style="flex: 1">[[Program]]</td>
+          </tr>
+          <tr style="display: flex; gap: 10px; padding: 8px;">
+            <th style="width: 200px; text-align: start;"><b>Amount</b></th>
+            <td style="flex: 1">[[Donation_Amount]]</td>
+          </tr>
+          <tr style="display: flex; gap: 10px; padding: 8px;">
+            <th style="width: 200px; text-align: start;"><b>Reason</b></th>
+            <td style="flex: 1">[[Donation_Reason]]</td>
+          </tr>
+          <tr style="display: flex; gap: 10px; padding: 8px;">
+            <th style="width: 200px; text-align: start;"><b>Payment Gate</b></th>
+            <td style="flex: 1">[[Payment_Method]]</td>
+          </tr>
+          <tr style="display: flex; gap: 10px; padding: 8px;">
+            <th style="width: 200px; text-align: start;"><b>Time Stamp</b></th>
+            <td style="flex: 1">[[Created_At]]</td>
+          </tr>
+        </table>
+        <p>
+          Once again, thank you for your generosity. We value your commitment to
+          our cause and consider you an essential part of our Give-AID family.
+        </p>
+        <p>
+          For more information on this program, please follow this link:
+          <a href="[[Program_Url]]" style="font-style: italic"
+            >[[Program_Name]]_[[Partner_Name]]</a
+          >
+        </p>
+        <p>
+          Thank you once again for choosing to be a part of Give-AID. We look
+          forward to working alongside you and creating a brighter future for
+          all.
+        </p>
+        <p>
+          <b><i>With deep gratitude,</i></b>
+        </p>
+        <p>
+          <b><i>[[Partner_Name]]</i></b>
+        </p>
+        <p>
+          <b><i>Give-AID</i></b>
+        </p>
+        <p>
+          <b><i>[[Home_Url]]</i></b>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
+  
