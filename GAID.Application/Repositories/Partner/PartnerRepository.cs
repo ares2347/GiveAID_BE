@@ -16,6 +16,7 @@ public class PartnerRepository : BaseRepository<Domain.Models.Partner.Partner>
     public override async Task<Domain.Models.Partner.Partner?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         var res = await DbContext.Partners
+            .Include(x => x.PartnerThumbnail)
             .Include(x => x.Page)
             .Include(x => x.Programs)
             .Include(x => x.CreatedBy)
