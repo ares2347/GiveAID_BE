@@ -8,6 +8,7 @@ using GAID.Application.Email;
 using GAID.Application.Repositories;
 using GAID.Domain;
 using GAID.Shared;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -131,6 +132,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.UseCors();
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new HangfireDashboardAuthorizationFilter() },
+    IsReadOnlyFunc = _ => false
+});
+GAID.Api.Configuration.Hangfire.RegisterRecurringJob();
 //config get file name in header
 app.Use(async (context, next) =>
 {
