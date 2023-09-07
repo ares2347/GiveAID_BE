@@ -64,6 +64,9 @@ public class PaymentController : ControllerBase
             if (program.CurrentUserEnrollment is null)
                 return BadRequest("User need to enroll in order to make a donation");
             program.CurrentUserEnrollment.Donations.Add(donation);
+            await _unitOfWork.SaveChangesAsync(_);
+            var existedProgram = await _unitOfWork.ProgramRepository.GetById(request.ProgramId, _);
+            var currentDonation = existedProgram!.CurrentUserEnrollment!.Donations.OrderBy(x => x.CreatedAt).Last();
             var order = new OrderRequest()
             {
                 CheckoutPaymentIntent = EOrderIntent.Capture,
@@ -71,8 +74,8 @@ public class PaymentController : ControllerBase
                 {
                     BrandName = program.Name,
                     LandingPage = ELandingPage.Billing,
-                    CancelUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/donation/{ program.CurrentUserEnrollment.EnrollmentId}",
-                    ReturnUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/donation/{ program.CurrentUserEnrollment.EnrollmentId}",
+                    CancelUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/donation/{currentDonation.DonationId }",
+                    ReturnUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/donation/{currentDonation.DonationId }",
                     UserAction = EUserAction.Continue,
                     ShippingPreference = EShippingPreference.NoShipping,
                 },
@@ -120,7 +123,7 @@ public class PaymentController : ControllerBase
                     _);
             if (response.ResponseStatusCode == HttpStatusCode.Created)
             {
-                donation.PaypalOrderId = response.ResponseBody?.Id ?? string.Empty;
+                currentDonation.PaypalOrderId = response.ResponseBody?.Id ?? string.Empty;
                 await _unitOfWork.SaveChangesAsync(_);
                 return Ok(response.ResponseBody.Links.FirstOrDefault(x => x.Rel == "approve"));
             }

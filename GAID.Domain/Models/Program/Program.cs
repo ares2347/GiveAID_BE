@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using GAID.Domain.Models.Donation;
 
 namespace GAID.Domain.Models.Program;
 
@@ -25,6 +26,6 @@ public class Program : BaseEntity
 
     public List<Enrollment.Enrollment> Enrollments { get; set; } = new();
 
-    [NotMapped] public decimal TotalDonation => Enrollments.Sum(x => x.Donations.Sum(y => y.Amount));
+    [NotMapped] public decimal TotalDonation => Enrollments.Sum(x => x.Donations.Where(y => y.Status == DonationStatus.Completed).Sum(y => y.Amount));
     [NotMapped] public Enrollment.Enrollment? CurrentUserEnrollment { get; set; }
 }
