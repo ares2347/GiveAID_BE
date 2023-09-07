@@ -15,6 +15,7 @@ public class AttachmentService : IAttachmentService
         {
             var blob = container.GetBlobClient(fileName);
             file.Position = 0;
+            file.Seek(0, SeekOrigin.Begin);
             await blob.UploadAsync(file, new BlobHttpHeaders { ContentType = contentType });
             var fileUrl = blob.Uri.AbsoluteUri;
             return fileUrl;

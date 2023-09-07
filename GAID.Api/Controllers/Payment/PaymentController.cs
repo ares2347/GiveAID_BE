@@ -53,7 +53,7 @@ public class PaymentController : ControllerBase
 
     [Authorize]
     [HttpPost("create")]
-    public async Task<ActionResult<Order>> CreateOrder(PaymentCreateRequest request, CancellationToken _ = default)
+    public async Task<ActionResult<LinkDescription>> CreateOrder(PaymentCreateRequest request, CancellationToken _ = default)
     {
         try
         {

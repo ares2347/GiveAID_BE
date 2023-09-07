@@ -22,7 +22,8 @@ public class ProgramController : ControllerBase
     private readonly IEmailService _emailService;
     private readonly UserContext _userContext;
 
-    public ProgramController(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, UserContext userContext)
+    public ProgramController(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService,
+        UserContext userContext)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
@@ -31,10 +32,16 @@ public class ProgramController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IQueryable<ProgramListingDto>> GetPrograms(int page = 0, int size = 10,
+    public ActionResult<IQueryable<ProgramListingDto>> GetPrograms(string? search, int? page = 0, int size = 10,
         CancellationToken _ = default)
     {
-        var partners = _unitOfWork.ProgramRepository.Get(x => !x.IsDelete, size, page)
+        var query = _unitOfWork.ProgramRepository.Get(x => !x.IsDelete, size, page);
+        if (!string.IsNullOrEmpty(search))
+        {
+            query = query.Where(x => x.Name.Contains(search) || x.Partner.Name.Contains(search));
+        }
+
+        var partners = query
             .Select(x => _mapper.Map<ProgramListingDto>(x));
         return Ok(partners);
     }
@@ -66,7 +73,7 @@ public class ProgramController : ControllerBase
         {
             var entity = _mapper.Map<Domain.Models.Program.Program>(request);
             var attachment = await _unitOfWork.AttachmentRepository.GetById(request.ProgramThumbnailId, _);
-            if(attachment is not null) entity.ProgramThumbnail = attachment;
+            if (attachment is not null) entity.ProgramThumbnail = attachment;
             entity.DonationReason = JsonConvert.SerializeObject(request.DonationReason);
             var result = await _unitOfWork.ProgramRepository.Create(entity);
             await _unitOfWork.SaveChangesAsync(_);
@@ -89,7 +96,7 @@ public class ProgramController : ControllerBase
             var program = await _unitOfWork.ProgramRepository.GetById(programId, _);
             if (program is null) return NotFound();
             var attachment = await _unitOfWork.AttachmentRepository.GetById(request.ProgramThumbnailId, _);
-            if(attachment is not null) program.ProgramThumbnail = attachment;
+            if (attachment is not null) program.ProgramThumbnail = attachment;
             program.Name = request.Name;
             program.Description = request.Description;
             program.DonationInfo = request.DonationInfo;
@@ -106,25 +113,27 @@ public class ProgramController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
+
     [HttpPut("enroll/{programId:guid}")]
-    public async Task<ActionResult<ProgramDetailDto>> EnrollProgram([FromRoute] Guid programId, CancellationToken _ = default)
+    public async Task<ActionResult<ProgramDetailDto>> EnrollProgram([FromRoute] Guid programId,
+        CancellationToken _ = default)
     {
         try
         {
             var result = await _unitOfWork.ProgramRepository.AddEnrollment(programId, _);
             await _unitOfWork.SaveChangesAsync(_);
-            var subjectReplacements = new Dictionary<string, string>{};
+            var subjectReplacements = new Dictionary<string, string> { };
             var bodyReplacements = new Dictionary<string, string>
             {
                 { "Recipient_Name", $"{_userContext.FullName} " },
                 { "Program_Name", $"{result?.Name}" },
                 { "Partner_Name", $"{result?.Partner?.Name}" },
                 { "Program_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{programId}" },
-                { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}"}
+                { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}" }
             };
             if (_userContext.Email is not null)
-                await _emailService.SendEmailNotification(EmailTemplateType.EnrollmentUserTemplate, _userContext.Email, subjectReplacements, bodyReplacements, _: _);
+                await _emailService.SendEmailNotification(EmailTemplateType.EnrollmentUserTemplate, _userContext.Email,
+                    subjectReplacements, bodyReplacements, _: _);
 
             //end of send email
             return Ok(_mapper.Map<ProgramDetailDto>(result));
@@ -134,10 +143,11 @@ public class ProgramController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
+
     [Authorize]
     [HttpPut("close/{programId:guid}")]
-    public async Task<ActionResult<ProgramDetailDto>> CloseProgram([FromRoute] Guid programId, CloseProgramRequest request, CancellationToken _ = default)
+    public async Task<ActionResult<ProgramDetailDto>> CloseProgram([FromRoute] Guid programId,
+        CloseProgramRequest request, CancellationToken _ = default)
     {
         //TODO: Trigger email notifications
         try
@@ -148,7 +158,7 @@ public class ProgramController : ControllerBase
             result.IsClosed = true;
             result.ClosedReason = request.CloseReason;
             await _unitOfWork.SaveChangesAsync(_);
-            var subjectReplacements = new Dictionary<string, string>{};
+            var subjectReplacements = new Dictionary<string, string> { };
             var bodyReplacements = new Dictionary<string, string>
             {
                 { "Recipient_Name", $"{_userContext.FullName} " },
@@ -157,13 +167,17 @@ public class ProgramController : ControllerBase
                 { "Partner", $"{result?.Partner?.Name}" },
                 { "Partner_Name", $"{result?.Partner?.Name}" },
                 { "Donation_Amount", $"{result?.TotalDonation}" },
-                { "Donation_Duration", $"{result?.EndDate.DayNumber - DateOnly.FromDateTime(result!.CreatedAt!.Value.DateTime).DayNumber}" },
+                {
+                    "Donation_Duration",
+                    $"{result?.EndDate.DayNumber - DateOnly.FromDateTime(result!.CreatedAt!.Value.DateTime).DayNumber}"
+                },
                 { "Donation_End_Date", $"{result?.EndDate}" },
                 { "Program_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{programId}" },
-                { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}"}
+                { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}" }
             };
             if (_userContext.Email is not null)
-                await _emailService.SendEmailNotification(EmailTemplateType.ProgramCloseTemplate, _userContext.Email, subjectReplacements, bodyReplacements, _: _);
+                await _emailService.SendEmailNotification(EmailTemplateType.ProgramCloseTemplate, _userContext.Email,
+                    subjectReplacements, bodyReplacements, _: _);
 
             //end of send email
             return Ok(_mapper.Map<ProgramDetailDto>(result));

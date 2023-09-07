@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GAID.Api.Dto.Attachment;
+using GAID.Api.Dto.Donation;
 using GAID.Api.Dto.Enrollment.Response;
 using GAID.Api.Dto.Page.Request;
 using GAID.Api.Dto.Page.Response;
@@ -61,5 +62,12 @@ public class AutoMapperProfile : Profile
             .ForMember(x => x.CreatedByName, opt => opt.MapFrom(src => src.CreatedBy.FullName));
         CreateMap<DonationDetailRequest, Donation>();
         CreateMap<PaymentCreateRequest, Donation>();
+        CreateMap<Donation, DonationDto>();
+        CreateMap<Donation, DonationAdminDto>()
+            .ForMember(x => x.ProgramId, opt => opt.MapFrom(src => src.Enrollment.Program.ProgramId))
+            .ForMember(x => x.ProgramName, opt => opt.MapFrom(src => src.Enrollment.Program.Name))
+            .ForMember(x => x.PartnerId, opt => opt.MapFrom(src => src.Enrollment.Program.Partner.PartnerId))
+            .ForMember(x => x.PartnerName, opt => opt.MapFrom(src => src.Enrollment.Program.Partner.Name))
+            .ForMember(x => x.CreatedByName, opt => opt.MapFrom(src => src.CreatedBy.FullName));
     }
 }
