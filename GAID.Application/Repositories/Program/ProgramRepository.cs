@@ -33,6 +33,7 @@ public class ProgramRepository : BaseRepository<Domain.Models.Program.Program>
             .Include(x => x.Partner)
             .Include(x => x.Enrollments)
             .ThenInclude(y => y.Donations)
+            .ThenInclude(z => z.CreatedBy)
             .Include(x => x.Page)
             .Include(x => x.CreatedBy)
             .Include(x => x.ModifiedBy)
