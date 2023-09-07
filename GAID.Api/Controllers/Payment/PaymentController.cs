@@ -166,7 +166,7 @@ public class PaymentController : ControllerBase
                     { "Donation_Amount", $"{donation.Amount}" },
                     { "Donation_Reason", $"{donation.Reason}" },
                     { "Payment_Method", "Paypal" },
-                    { "Time Stamp", $"{capture.CreateTime}"},
+                    { "Created_At", $"{capture.CreateTime}"},
                     { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}"}
                 };
                 if (_userContext.Email is not null)
