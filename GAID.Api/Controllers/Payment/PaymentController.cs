@@ -63,8 +63,7 @@ public class PaymentController : ControllerBase
             if (program is null) return NotFound("Program not found.");
             if (program.CurrentUserEnrollment is null)
                 return BadRequest("User need to enroll in order to make a donation");
-            donation.EnrollmentId = program.CurrentUserEnrollment.EnrollmentId;
-            var result = await _unitOfWork.DonationRepository.Create(donation);
+            program.CurrentUserEnrollment.Donations.Add(donation);
             var order = new OrderRequest()
             {
                 CheckoutPaymentIntent = EOrderIntent.Capture,
@@ -72,8 +71,8 @@ public class PaymentController : ControllerBase
                 {
                     BrandName = program.Name,
                     LandingPage = ELandingPage.Billing,
-                    CancelUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/donation/{result.DonationId}",
-                    ReturnUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/donation/{result.DonationId}",
+                    CancelUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/donation/{ program.CurrentUserEnrollment.EnrollmentId}",
+                    ReturnUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/donation/{ program.CurrentUserEnrollment.EnrollmentId}",
                     UserAction = EUserAction.Continue,
                     ShippingPreference = EShippingPreference.NoShipping,
                 },
@@ -123,7 +122,7 @@ public class PaymentController : ControllerBase
             {
                 donation.PaypalOrderId = response.ResponseBody?.Id ?? string.Empty;
                 await _unitOfWork.SaveChangesAsync(_);
-                return Ok(response.ResponseBody);
+                return Ok(response.ResponseBody.Links.FirstOrDefault(x => x.Rel == "approve"));
             }
             await _unitOfWork.SaveChangesAsync(_);
             return BadRequest(response.ResponseBody);
