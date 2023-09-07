@@ -17,7 +17,13 @@ public class ProgramRepository : BaseRepository<Domain.Models.Program.Program>
 
     public override IQueryable<Domain.Models.Program.Program> Get(Expression<Func<Domain.Models.Program.Program, bool>>? expression, int? size, int? page)
     {
-        return base.Get(expression, size, page).Include(x => x.ProgramThumbnail);
+        return base.Get(expression, size, page).Include(x => x.ProgramThumbnail)
+            .Include(x => x.Partner)
+            .Include(x => x.Enrollments)
+            .ThenInclude(y => y.Donations)
+            .Include(x => x.Page)
+            .Include(x => x.CreatedBy)
+            .Include(x => x.ModifiedBy);
     }
 
     public override async Task<Domain.Models.Program.Program?> GetById(Guid id, CancellationToken cancellationToken = default)

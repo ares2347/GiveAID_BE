@@ -8,12 +8,18 @@ namespace GAID.Application.Repositories.Partner;
 
 public class PartnerRepository : BaseRepository<Domain.Models.Partner.Partner>
 {
-    public override IQueryable<Domain.Models.Partner.Partner> Get(Expression<Func<Domain.Models.Partner.Partner, bool>>? expression, int? size, int? page)
+    public override IQueryable<Domain.Models.Partner.Partner> Get(
+        Expression<Func<Domain.Models.Partner.Partner, bool>>? expression, int? size, int? page)
     {
-        return base.Get(expression, size, page).Include(x => x.PartnerThumbnail);
+        return base.Get(expression, size, page).Include(x => x.PartnerThumbnail).Include(x => x.PartnerThumbnail)
+            .Include(x => x.Page)
+            .Include(x => x.Programs)
+            .Include(x => x.CreatedBy)
+            .Include(x => x.ModifiedBy);
     }
 
-    public override async Task<Domain.Models.Partner.Partner?> GetById(Guid id, CancellationToken cancellationToken = default)
+    public override async Task<Domain.Models.Partner.Partner?> GetById(Guid id,
+        CancellationToken cancellationToken = default)
     {
         var res = await DbContext.Partners
             .Include(x => x.PartnerThumbnail)
@@ -22,11 +28,12 @@ public class PartnerRepository : BaseRepository<Domain.Models.Partner.Partner>
             .Include(x => x.CreatedBy)
             .Include(x => x.ModifiedBy)
             .FirstOrDefaultAsync(x => x.PartnerId == id && !x.IsDelete,
-            cancellationToken);
+                cancellationToken);
         return res;
     }
 
-    public PartnerRepository(AppDbContext dbContext, UserContext userContext, UserManager<Domain.Models.User.User> userManager) : base(dbContext, userContext, userManager)
+    public PartnerRepository(AppDbContext dbContext, UserContext userContext,
+        UserManager<Domain.Models.User.User> userManager) : base(dbContext, userContext, userManager)
     {
     }
 }
