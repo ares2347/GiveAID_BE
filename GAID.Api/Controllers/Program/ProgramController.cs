@@ -173,6 +173,7 @@ public class ProgramController : ControllerBase
                 },
                 { "Donation_End_Date", $"{result?.EndDate}" },
                 { "Program_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{programId}" },
+                { "[Program_Url]", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{programId}" },
                 { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}" }
             };
             if (_userContext.Email is not null)

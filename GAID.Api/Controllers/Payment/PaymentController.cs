@@ -161,6 +161,8 @@ public class PaymentController : ControllerBase
                     { "Paypal_Order_Id", $"{donation.PaypalOrderId}"},
                     { "Program_Name", $"{donation.Enrollment?.Program.Name}" },
                     { "Program", $"{donation.Enrollment?.Program.Name}" },
+                    { "[Program_Url]", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{donation.Enrollment?.Program.ProgramId}" },
+                    { "Program_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{donation.Enrollment?.Program.ProgramId}" },
                     { "Partner_Name", $"{donation.Enrollment?.Program?.Partner?.Name}" },
                     { "Partner", $"{donation.Enrollment?.Program?.Partner?.Name}" },
                     { "Donation_Amount", $"{donation.Amount}" },
