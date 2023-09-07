@@ -14,6 +14,10 @@ public class PartnerRepository : BaseRepository<Domain.Models.Partner.Partner>
         return base.Get(expression, size, page).Include(x => x.PartnerThumbnail).Include(x => x.PartnerThumbnail)
             .Include(x => x.Page)
             .Include(x => x.Programs)
+            .ThenInclude(x => x.ProgramThumbnail)
+            .Include(x => x.Programs)
+            .ThenInclude(x => x.Enrollments)
+            .ThenInclude(y => y.Donations)
             .Include(x => x.CreatedBy)
             .Include(x => x.ModifiedBy);
     }
