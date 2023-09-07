@@ -23,6 +23,7 @@ public class ProgramRepository : BaseRepository<Domain.Models.Program.Program>
     public override async Task<Domain.Models.Program.Program?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         var res = await DbContext.Programs
+            .Include(x => x.ProgramThumbnail)
             .Include(x => x.Partner)
             .Include(x => x.Enrollments)
             .ThenInclude(y => y.Donations)
