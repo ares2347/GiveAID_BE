@@ -32,7 +32,7 @@ public class ProgramController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IQueryable<ProgramListingDto>> GetPrograms(string? search, int? page = 0, int size = 10,
+    public ActionResult<IQueryable<ProgramListingDto>> GetPrograms(string? search, bool isActive = false, int? page = 0, int size = 10,
         CancellationToken _ = default)
     {
         var query = _unitOfWork.ProgramRepository.Get(x => !x.IsDelete, size, page);
@@ -40,6 +40,8 @@ public class ProgramController : ControllerBase
         {
             query = query.Where(x => x.Name.Contains(search) || x.Partner.Name.Contains(search));
         }
+
+        if (isActive) query = query.Where(x => !x.IsClosed);
 
         var partners = query
             .Select(x => _mapper.Map<ProgramListingDto>(x));
