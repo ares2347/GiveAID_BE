@@ -86,13 +86,26 @@ public class ProgramRepository : BaseRepository<Domain.Models.Program.Program>
                 { "Partner", $"{program?.Partner?.Name}" },
                 { "Partner_Name", $"{program?.Partner?.Name}" },
                 { "Donation_Amount", $"{program?.TotalDonation}" },
-                { "Donation_Duration", $"{program?.EndDate.DayNumber - DateOnly.FromDateTime(program!.CreatedAt!.Value.DateTime).DayNumber}" },
+                { "Donation_Duration", $"{program?.EndDate.DayNumber - program?.StartDate.DayNumber}" },
                 { "Donation_End_Date", $"{program?.EndDate}" },
                 { "Program_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{program?.ProgramId}" },
                 { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}"}
             };
             if (_userContext.Email is not null)
                 await _emailService.SendEmailNotification(EmailTemplateType.ProgramCloseTemplate, _userContext.Email, subjectReplacements, bodyReplacements);
+        }
+        DbContext.Programs.UpdateRange(duePrograms);
+        await DbContext.SaveChangesAsync();
+    }
+
+    public async Task OpenProgramDueDate()
+    {
+        var duePrograms = await DbContext.Programs
+            .Where(x => x.StartDate == DateOnly.FromDateTime(DateTimeOffset.UtcNow.DateTime) && !x.IsDelete).ToListAsync();
+        foreach (var program in duePrograms)
+        {
+            program.IsClosed = false;
+            program.IsOpen = true;
         }
         DbContext.Programs.UpdateRange(duePrograms);
         await DbContext.SaveChangesAsync();

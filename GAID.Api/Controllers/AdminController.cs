@@ -1,4 +1,5 @@
 using AutoMapper;
+using GAID.Api.Dto;
 using GAID.Api.Dto.Donation;
 using GAID.Application.Repositories;
 using GAID.Domain.Models.User;
@@ -22,10 +23,17 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IQueryable<DonationAdminDto>>> GetDonations(int page = 0, int size = 10,
+    public async Task<ActionResult<ListingResult<DonationAdminDto>>> GetDonations(int page = 0, int size = 10,
         CancellationToken _ = default)
     {
         var donations = _unitOfWork.DonationRepository.Get(null, size, page).Select(x => _mapper.Map<DonationAdminDto>(x));
-        return Ok(donations);
+        var total = _unitOfWork.DonationRepository.Count(null);
+        return Ok(new ListingResult<DonationAdminDto>
+        {
+            Data = donations,
+            Page = page,
+            Size = size,
+            Total = total
+        });
     }
 }

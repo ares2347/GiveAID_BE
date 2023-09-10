@@ -1,4 +1,5 @@
 using AutoMapper;
+using GAID.Api.Dto;
 using GAID.Api.Dto.Partner.Request;
 using GAID.Api.Dto.Partner.Response;
 using GAID.Application.Repositories;
@@ -21,11 +22,18 @@ public class PartnerController : ControllerBase
     }
     
     [HttpGet]
-    public ActionResult<IQueryable<PartnerListingDto>> GetPartners(int page = 0, int size = 10, CancellationToken _ = default)
+    public ActionResult<ListingResult<PartnerListingDto>> GetPartners(int page = 0, int size = 10, CancellationToken _ = default)
     {
         var partners = _unitOfWork.PartnerRepository.Get(x => !x.IsDelete, size, page)
             .Select(x => _mapper.Map<PartnerListingDto>(x));
-        return Ok(partners);
+        var total = _unitOfWork.PartnerRepository.Count(x => !x.IsDelete);
+        return Ok(new ListingResult<PartnerListingDto>
+        {
+            Data = partners,
+            Page = page,
+            Size = size,
+            Total = total
+        });
     }
 
     [HttpGet("{partnerId:guid}")]

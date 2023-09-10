@@ -13,6 +13,7 @@ public class ProgramDetailDto
     public List<string> DonationReason { get; set; } =new();
     public decimal Target { get; set; }
     public DateOnly EndDate { get; set; }
+    public DateOnly StartDate { get; set; }
     public PageDetailDto Page { get; set; } = new();
     public decimal TotalDonation { get; set; }
     public bool IsClosed { get; set; } = false;

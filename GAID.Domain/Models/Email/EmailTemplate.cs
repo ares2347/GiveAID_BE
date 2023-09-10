@@ -12,5 +12,6 @@ public enum EmailTemplateType
 {
     DonationUserTemplate,
     EnrollmentUserTemplate,
-    ProgramCloseTemplate
+    ProgramCloseTemplate,
+    ShareProgram
 }

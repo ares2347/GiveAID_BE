@@ -32,6 +32,9 @@ public static class Hangfire
     {
         RecurringJob
             .AddOrUpdate<ProgramRepository>(x => x.CloseProgramDueDate(), CronExpression.CRON_EXP_EVERY_DAY_AT_MIDNIGHT_UTC);
+        RecurringJob
+            .AddOrUpdate<ProgramRepository>(x => x.OpenProgramDueDate(),
+                CronExpression.CRON_EXP_EVERY_DAY_AT_MIDNIGHT_UTC);
     }
 }
 

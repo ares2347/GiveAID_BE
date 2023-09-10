@@ -1,4 +1,5 @@
 using AutoMapper;
+using GAID.Api.Dto;
 using GAID.Api.Dto.Program;
 using GAID.Api.Dto.Program.Request;
 using GAID.Api.Dto.Program.Response;
@@ -32,20 +33,31 @@ public class ProgramController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IQueryable<ProgramListingDto>> GetPrograms(string? search, bool isActive = false, int? page = 0, int size = 10,
+    public ActionResult<ListingResult<ProgramListingDto>> GetPrograms(string? search, bool isActive = true,
+        int page = 0, int size = 10,
         CancellationToken _ = default)
     {
-        var query = _unitOfWork.ProgramRepository.Get(x => !x.IsDelete, size, page);
+        var query = _unitOfWork.ProgramRepository.Get(x => !x.IsDelete && (isActive && !x.IsClosed && x.IsOpen), size,
+            page);
+        var total = _unitOfWork.ProgramRepository.Count(x => !x.IsDelete && (isActive && !x.IsClosed && x.IsOpen));
         if (!string.IsNullOrEmpty(search))
         {
             query = query.Where(x => x.Name.Contains(search) || x.Partner.Name.Contains(search));
+            total = _unitOfWork.ProgramRepository.Count(x =>
+                !x.IsDelete && (x.Name.Contains(search) || x.Partner.Name.Contains(search)) &&
+                (isActive && !x.IsClosed && x.IsOpen));
         }
-
-        if (isActive) query = query.Where(x => !x.IsClosed);
 
         var partners = query
             .Select(x => _mapper.Map<ProgramListingDto>(x));
-        return Ok(partners);
+
+        return Ok(new ListingResult<ProgramListingDto>
+        {
+            Data = partners,
+            Page = page,
+            Size = size,
+            Total = total
+        });
     }
 
     [HttpGet("{programId:guid}")]
@@ -73,6 +85,8 @@ public class ProgramController : ControllerBase
     {
         try
         {
+            if (request.StartDate < DateOnly.FromDateTime(DateTime.Today))
+                return BadRequest("Start Date invalid.");
             var entity = _mapper.Map<Domain.Models.Program.Program>(request);
             var attachment = await _unitOfWork.AttachmentRepository.GetById(request.ProgramThumbnailId, _);
             if (attachment is not null) entity.ProgramThumbnail = attachment;
@@ -105,6 +119,8 @@ public class ProgramController : ControllerBase
             program.DonationReason = JsonConvert.SerializeObject(request.DonationReason);
             program.Target = request.Target;
             program.EndDate = request.EndDate;
+            if (program.StartDate > DateOnly.FromDateTime(DateTime.Today))
+                program.StartDate = request.StartDate;
             // program.Page = request.Page;
             var result = await _unitOfWork.ProgramRepository.Update(program);
             await _unitOfWork.SaveChangesAsync(_);
@@ -171,7 +187,7 @@ public class ProgramController : ControllerBase
                 { "Donation_Amount", $"{result?.TotalDonation}" },
                 {
                     "Donation_Duration",
-                    $"{result?.EndDate.DayNumber - DateOnly.FromDateTime(result!.CreatedAt!.Value.DateTime).DayNumber}"
+                    $"{result?.EndDate.DayNumber - result?.StartDate.DayNumber}"
                 },
                 { "Donation_End_Date", $"{result?.EndDate}" },
                 { "Program_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{programId}" },
@@ -188,6 +204,45 @@ public class ProgramController : ControllerBase
         catch (Exception e)
         {
             return BadRequest(e.Message);
+        }
+    }
+
+    [Authorize]
+    [HttpPost("share/{programId:guid}")]
+    public async Task<ActionResult> ShareProgram([FromRoute] Guid programId,
+        ShareProgramRequest request, CancellationToken _ = default)
+    {
+        try
+        {
+            var result = await _unitOfWork.ProgramRepository.GetById(programId, _);
+            if (result is null) return NotFound("Program not found");
+            if (result.IsClosed) return BadRequest("Program has already been closed.");
+            foreach (var email in request.Email)
+            {
+                var subjectReplacements = new Dictionary<string, string> { };
+                var bodyReplacements = new Dictionary<string, string>
+                {
+                    { "Recipient_Name", $"{email} " },
+                    { "Program_Name", $"{result?.Name}" },
+                    { "Partner_Name", $"{result?.Partner?.Name}" },
+                    { "Start_Date", $"{result?.StartDate}" },
+                    { "End_Date", $"{result?.EndDate}" },
+                    { "Target", $"{result?.Target}" },
+                    { "Program_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{programId}" },
+                    { "[Program_Url]", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{programId}" },
+                    { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}" }
+                };
+                if (Helper.ValidateEmailString(email))
+                    await _emailService.SendEmailNotification(EmailTemplateType.ShareProgram, email,
+                        subjectReplacements, bodyReplacements, _: _);
+            }
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
     }
 }

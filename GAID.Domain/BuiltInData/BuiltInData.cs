@@ -71,6 +71,13 @@ public static class BuiltInData
             EmailTemplateType = EmailTemplateType.ProgramCloseTemplate,
             Subject = "[Give-AID] Important Update: Closure of Our Charity Program",
             Body = GetText($"{AppContext.BaseDirectory}/Models/Email/BuiltInTemplates/ProgramCloseTemplate.txt")
+        },
+        new EmailTemplate
+        {
+            EmailTemplateId = Guid.Parse("30000000-0000-0000-0000-000000000004"),
+            EmailTemplateType = EmailTemplateType.ShareProgram,
+            Subject = "[Give-AID] Join Us in Making a Difference: Invitation to Our NGO Program",
+            Body = GetText($"{AppContext.BaseDirectory}/Models/Email/BuiltInTemplates/ShareProgram.txt")
         }
     };
 

@@ -41,6 +41,17 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
         return query;
     }
 
+    public virtual int Count(Expression<Func<T, bool>>? expression)
+    {
+        var query = DbContext.Set<T>().AsQueryable();
+        if (expression is not null)
+        {
+            query = query.Where(expression);
+        }
+        
+        return query.Count();
+    }
+
     public abstract Task<T?> GetById(Guid id, CancellationToken cancellationToken = default);
 
     public virtual async Task<T> Create(T entity)

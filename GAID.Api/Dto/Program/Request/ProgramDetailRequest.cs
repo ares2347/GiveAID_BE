@@ -8,6 +8,7 @@ public class ProgramDetailRequest
     public List<string> DonationReason { get; set; } = new();
     public decimal Target { get; set; }
     public DateOnly EndDate { get; set; }
+    public DateOnly StartDate { get; set; }
     public Guid ProgramThumbnailId { get; set; } = new();
     // public Page Page { get; set; } = new();
     public Guid PartnerId { get; set; }

@@ -10,6 +10,7 @@ public class ProgramListingDto
     public decimal Target { get; set; }
     public string Description { get; set; } = string.Empty;
     public DateOnly EndDate { get; set; }
+    public DateOnly StartDate { get; set; }
     public decimal TotalDonation { get; set; }
     public bool IsClosed { get; set; } = false;
     public string ClosedReason { get; set; } = string.Empty;

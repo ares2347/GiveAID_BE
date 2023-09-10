@@ -28,6 +28,10 @@
       <EmbeddedResource Include="Models\Email\BuiltInTemplates\ProgramCloseTemplate.txt">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
+      <None Remove="Models\Email\BuiltInTemplates\ShareProgram.txt" />
+      <EmbeddedResource Include="Models\Email\BuiltInTemplates\ShareProgram.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 
 </Project>
