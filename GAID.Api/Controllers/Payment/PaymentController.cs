@@ -74,8 +74,8 @@ public class PaymentController : ControllerBase
                 {
                     BrandName = program.Name,
                     LandingPage = ELandingPage.Billing,
-                    CancelUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Programdetail/programId={request.ProgramId}",
-                    ReturnUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Programdetail/programId={request.ProgramId}",
+                    CancelUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Payment/checkStatusPayment/{currentDonation.DonationId}",
+                    ReturnUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Payment/checkStatusPayment/{currentDonation.DonationId}",
                     UserAction = EUserAction.Continue,
                     ShippingPreference = EShippingPreference.NoShipping,
                 },
