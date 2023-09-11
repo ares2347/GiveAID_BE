@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Web;
+using AutoMapper;
 using GAID.Api.Dto.Attachment;
 using GAID.Api.Dto.Donation;
 using GAID.Api.Dto.Enrollment.Response;
@@ -51,6 +52,7 @@ public class AutoMapperProfile : Profile
             .ForMember(x => x.ModifiedByName, opt => opt.MapFrom(src => src.ModifiedBy.FullName));
 
         CreateMap<Page, PageDetailDto>()
+            .ForMember(x => x.Content, opt => opt.MapFrom(src => HttpUtility.HtmlDecode(src.Content)))
             .ForMember(x => x.CreatedById, opt => opt.MapFrom(src => src.CreatedBy.Id))
             .ForMember(x => x.CreatedByName, opt => opt.MapFrom(src => src.CreatedBy.FullName))
             .ForMember(x => x.ModifiedById, opt => opt.MapFrom(src => src.ModifiedBy.Id))

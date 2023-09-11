@@ -23,7 +23,8 @@ public class PageController : ControllerBase
         _unitOfWork = unitOfWork;
     }
 
-    [HttpGet("page/{page}")]
+    [AllowAnonymous]
+    [HttpGet]
     public async Task<ActionResult<PageDetailDto>> GetPage(PageType type, CancellationToken _ = default)
     {
         try

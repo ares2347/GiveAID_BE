@@ -37,9 +37,9 @@ public class ProgramController : ControllerBase
         int page = 0, int size = 10,
         CancellationToken _ = default)
     {
-        var query = _unitOfWork.ProgramRepository.Get(x => !x.IsDelete && (isActive && !x.IsClosed && x.IsOpen), size,
+        var query = _unitOfWork.ProgramRepository.Get(x => !x.IsDelete && (!isActive || (!x.IsClosed && x.IsOpen)), size,
             page);
-        var total = _unitOfWork.ProgramRepository.Count(x => !x.IsDelete && (isActive && !x.IsClosed && x.IsOpen));
+        var total = _unitOfWork.ProgramRepository.Count(x => !x.IsDelete && (!isActive || (!x.IsClosed && x.IsOpen)));
         if (!string.IsNullOrEmpty(search))
         {
             query = query.Where(x => x.Name.Contains(search) || x.Partner.Name.Contains(search));

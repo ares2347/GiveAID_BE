@@ -21,6 +21,7 @@ public class ProgramDetailDto
     public AttachmentDetailDto ProgramThumbnail { get; set; } = new();
     public List<EnrollmentListingDto> Enrollments { get; set; } = new();
     public EnrollmentListingDto CurrentUserEnrollment { get; set; } = new();
+    public Guid PartnerId { get; set; }
     public DateTimeOffset? ModifiedAt { get; set; } = DateTimeOffset.UtcNow;
     public Guid? ModifiedById { get; set; }
     public string? ModifiedByName { get; set; }

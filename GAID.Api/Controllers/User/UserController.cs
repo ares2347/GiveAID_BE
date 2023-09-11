@@ -94,6 +94,7 @@ public class UserController : ControllerBase
             PhoneNumber = request.Phone,
             Email = request.Email,
             DateOfBirth = request.DateOfBirth,
+            CreatedAt = DateTimeOffset.UtcNow
         };
         try
         {

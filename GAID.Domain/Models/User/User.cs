@@ -11,5 +11,6 @@ public class User : IdentityUser<Guid>
 
     public string PaymentInformation { get; set; } = string.Empty;
     public bool IsDeleted { get; set; } = false;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     [NotMapped] public List<string> Roles { get; set; } = new();
 }

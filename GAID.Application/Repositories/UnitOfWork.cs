@@ -1,4 +1,5 @@
 ﻿using GAID.Application.Email;
+using GAID.Application.Repositories.Admin;
 using GAID.Application.Repositories.Attachment;
 using GAID.Application.Repositories.Donation;
 using GAID.Application.Repositories.Page;
@@ -12,7 +13,8 @@ namespace GAID.Application.Repositories;
 
 public class UnitOfWork : IUnitOfWork
 {
-    public UnitOfWork(AppDbContext dbContext, UserManager<Domain.Models.User.User> userManager, UserContext userContext, IEmailService emailService)
+    public UnitOfWork(AppDbContext dbContext, UserManager<Domain.Models.User.User> userManager, UserContext userContext,
+        IEmailService emailService)
     {
         _dbContext = dbContext;
         _userManager = userManager;
@@ -28,6 +30,7 @@ public class UnitOfWork : IUnitOfWork
     private PartnerRepository? _partnerRepository;
     private ProgramRepository? _programRepository;
     private PageRepository? _pageRepository;
+    private AdminRepository? _adminRepository;
     private DonationRepository? _donationRepository;
 
     public AttachmentRepository AttachmentRepository
@@ -50,10 +53,13 @@ public class UnitOfWork : IUnitOfWork
         _programRepository ??= new ProgramRepository(_dbContext, _userContext, _userManager, _emailService);
 
     public PageRepository PageRepository =>
-        _pageRepository ??= new PageRepository(_dbContext, _userContext, _userManager);    
+        _pageRepository ??= new PageRepository(_dbContext, _userContext, _userManager);
+
     public DonationRepository DonationRepository =>
         _donationRepository ??= new DonationRepository(_dbContext, _userContext, _userManager);
 
+    public AdminRepository AdminRepository =>
+        _adminRepository ??= new AdminRepository(_dbContext);
 
     public async Task<bool> SaveChangesAsync(CancellationToken _ = default)
     {
