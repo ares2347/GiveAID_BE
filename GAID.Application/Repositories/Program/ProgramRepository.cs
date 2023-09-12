@@ -70,8 +70,9 @@ public class ProgramRepository : BaseRepository<Domain.Models.Program.Program>
 
     public async Task CloseProgramDueDate()
     {
+        var currentDate = DateOnly.FromDateTime(DateTimeOffset.UtcNow.DateTime);
         var duePrograms = await DbContext.Programs
-            .Where(x => x.EndDate < DateOnly.FromDateTime(DateTimeOffset.UtcNow.DateTime) && !x.IsDelete).ToListAsync();
+            .Where(x => x.EndDate < currentDate && !x.IsDelete).ToListAsync();
         foreach (var program in duePrograms)
         {
             if (program.IsClosed) continue;
@@ -100,8 +101,9 @@ public class ProgramRepository : BaseRepository<Domain.Models.Program.Program>
 
     public async Task OpenProgramDueDate()
     {
+        var currentDate = DateOnly.FromDateTime(DateTimeOffset.UtcNow.DateTime);
         var duePrograms = await DbContext.Programs
-            .Where(x => x.StartDate == DateOnly.FromDateTime(DateTimeOffset.UtcNow.DateTime) && !x.IsDelete).ToListAsync();
+            .Where(x => x.StartDate ==  currentDate && !x.IsDelete).ToListAsync();
         foreach (var program in duePrograms)
         {
             program.IsClosed = false;
