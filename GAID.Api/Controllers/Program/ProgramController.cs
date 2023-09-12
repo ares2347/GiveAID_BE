@@ -140,21 +140,29 @@ public class ProgramController : ControllerBase
         {
             var result = await _unitOfWork.ProgramRepository.AddEnrollment(programId, _);
             await _unitOfWork.SaveChangesAsync(_);
-            var subjectReplacements = new Dictionary<string, string> { };
-            var bodyReplacements = new Dictionary<string, string>
+            if (result != null)
             {
-                { "Recipient_Name", $"{_userContext.FullName} " },
-                { "Program_Name", $"{result?.Name}" },
-                { "Partner_Name", $"{result?.Partner?.Name}" },
-                { "Program_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{programId}" },
-                { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}" }
-            };
-            if (_userContext.Email is not null)
-                await _emailService.SendEmailNotification(EmailTemplateType.EnrollmentUserTemplate, _userContext.Email,
-                    subjectReplacements, bodyReplacements, _: _);
+                result.CurrentUserEnrollment =
+                    result.Enrollments.FirstOrDefault(x => x.CreatedBy != null && x.CreatedBy.Id == _userContext.UserId);
+                var subjectReplacements = new Dictionary<string, string> { };
+                var bodyReplacements = new Dictionary<string, string>
+                {
+                    { "Recipient_Name", $"{_userContext.FullName} " },
+                    { "Program_Name", $"{result?.Name}" },
+                    { "Partner_Name", $"{result?.Partner?.Name}" },
+                    { "Program_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Program/{programId}" },
+                    { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}" }
+                };
+                if (_userContext.Email is not null)
+                    await _emailService.SendEmailNotification(EmailTemplateType.EnrollmentUserTemplate,
+                        _userContext.Email,
+                        subjectReplacements, bodyReplacements, _: _);
 
-            //end of send email
-            return Ok(_mapper.Map<ProgramDetailDto>(result));
+                //end of send email
+                return Ok(_mapper.Map<ProgramDetailDto>(result));
+            }
+
+            return NotFound("Program not found");
         }
         catch (Exception e)
         {
