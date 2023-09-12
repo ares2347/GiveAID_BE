@@ -40,7 +40,7 @@ public class AutoMapperProfile : Profile
         CreateMap<Domain.Models.Program.Program, ProgramListingDto>();
         CreateMap<Domain.Models.Program.Program, ProgramDetailDto>()
             .ForMember(x => x.DonationReason, opt => opt.MapFrom(src => JsonConvert.DeserializeObject<List<string>>(src.DonationReason)))
-            .ForMember(x => x.PartnerName, opt => opt.MapFrom(src => JsonConvert.DeserializeObject<List<string>>(src.Partner.Name)))
+            .ForMember(x => x.PartnerName, opt => opt.MapFrom(src => src.Partner.Name))
             .ForMember(x => x.CreatedById, opt => opt.MapFrom(src => src.CreatedBy.Id))
             .ForMember(x => x.CreatedByName, opt => opt.MapFrom(src => src.CreatedBy.FullName))
             .ForMember(x => x.ModifiedById, opt => opt.MapFrom(src => src.ModifiedBy.Id))
