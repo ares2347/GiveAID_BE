@@ -32,7 +32,8 @@ public class PaymentController : ControllerBase
     static string _clientSecret = "ECqWkEl1cA-A8-Khp9FQRELI9rGTZcxVyiZpazLf975EHwYCGQdWOhyzYJOX_eIRFX1unfe4DkBiyQaI";
 
 
-    public PaymentController(IHttpClientFactory clientFactory, IMapper mapper, IUnitOfWork unitOfWork, UserContext userContext, IEmailService emailService)
+    public PaymentController(IHttpClientFactory clientFactory, IMapper mapper, IUnitOfWork unitOfWork,
+        UserContext userContext, IEmailService emailService)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
@@ -54,7 +55,8 @@ public class PaymentController : ControllerBase
 
     [Authorize]
     [HttpPost("create")]
-    public async Task<ActionResult<LinkDescription>> CreateOrder(PaymentCreateRequest request, CancellationToken _ = default)
+    public async Task<ActionResult<LinkDescription>> CreateOrder(PaymentCreateRequest request,
+        CancellationToken _ = default)
     {
         try
         {
@@ -75,8 +77,10 @@ public class PaymentController : ControllerBase
                 {
                     BrandName = program.Name,
                     LandingPage = ELandingPage.Billing,
-                    CancelUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Programdetail/programId={request.ProgramId}",
-                    ReturnUrl = $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Payment/checkStatusPayment/{currentDonation.DonationId}",
+                    CancelUrl =
+                        $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Programdetail/programId={request.ProgramId}",
+                    ReturnUrl =
+                        $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Payment/checkStatusPayment/{currentDonation.DonationId}",
                     UserAction = EUserAction.Continue,
                     ShippingPreference = EShippingPreference.NoShipping,
                 },
@@ -128,6 +132,7 @@ public class PaymentController : ControllerBase
                 await _unitOfWork.SaveChangesAsync(_);
                 return Ok(response.ResponseBody.Links.FirstOrDefault(x => x.Rel == "approve"));
             }
+
             await _unitOfWork.SaveChangesAsync(_);
             return BadRequest(response.ResponseBody);
         }
@@ -147,35 +152,46 @@ public class PaymentController : ControllerBase
             if (donation is null) return NotFound("Donation not found");
             var accessToken = await _client.AuthenticateAsync(cancellationToken: _);
             if (accessToken is null) return BadRequest("Unauthorized.");
-            var capture = await _client.CaptureOrderAsync(accessToken, donation.PaypalOrderId, cancellationToken: _);
-            if (capture is null) return NotFound();
-            if (capture.Status == EOrderStatus.Completed)
+            if (donation.Status == DonationStatus.Pending)
             {
-                donation.Status = DonationStatus.Completed;
-                await _unitOfWork.SaveChangesAsync(_);
-                var subjectReplacements = new Dictionary<string, string>{};
-                var bodyReplacements = new Dictionary<string, string>
+                var capture =
+                    await _client.CaptureOrderAsync(accessToken, donation.PaypalOrderId, cancellationToken: _);
+                if (capture is null) return NotFound();
+                if (capture.Status == EOrderStatus.Completed)
                 {
-                    { "Recipient_Name", $"{_userContext.FullName}" },
-                    { "Donation_Id", $"{donation.DonationId}"},
-                    { "Enrollment_Id", $"{donation.EnrollmentId}"},
-                    { "Paypal_Order_Id", $"{donation.PaypalOrderId}"},
-                    { "Program_Name", $"{donation.Enrollment?.Program.Name}" },
-                    { "Program", $"{donation.Enrollment?.Program.Name}" },
-                    { "[Program_Url]", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Programdetail/programId={donation.Enrollment?.Program.ProgramId}" },
-                    { "Program_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Programdetail/programId={donation.Enrollment?.Program.ProgramId}" },
-                    { "Partner_Name", $"{donation.Enrollment?.Program?.Partner?.Name}" },
-                    { "Partner", $"{donation.Enrollment?.Program?.Partner?.Name}" },
-                    { "Donation_Amount", $"{donation.Amount}" },
-                    { "Donation_Reason", $"{donation.Reason}" },
-                    { "Payment_Method", "Paypal" },
-                    { "Created_At", $"{capture.CreateTime}"},
-                    { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}"}
-                };
-                if (_userContext.Email is not null)
-                    await _emailService.SendEmailNotification(EmailTemplateType.DonationUserTemplate, _userContext.Email, subjectReplacements, bodyReplacements, _: _);
+                    donation.Status = DonationStatus.Completed;
+                    await _unitOfWork.SaveChangesAsync(_);
+                    var subjectReplacements = new Dictionary<string, string> { };
+                    var bodyReplacements = new Dictionary<string, string>
+                    {
+                        { "Recipient_Name", $"{_userContext.FullName}" },
+                        { "Donation_Id", $"{donation.DonationId}" },
+                        { "Enrollment_Id", $"{donation.EnrollmentId}" },
+                        { "Paypal_Order_Id", $"{donation.PaypalOrderId}" },
+                        { "Program_Name", $"{donation.Enrollment?.Program.Name}" },
+                        { "Program", $"{donation.Enrollment?.Program.Name}" },
+                        {
+                            "[Program_Url]",
+                            $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Programdetail/programId={donation.Enrollment?.Program.ProgramId}"
+                        },
+                        {
+                            "Program_Url",
+                            $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}/Programdetail/programId={donation.Enrollment?.Program.ProgramId}"
+                        },
+                        { "Partner_Name", $"{donation.Enrollment?.Program?.Partner?.Name}" },
+                        { "Partner", $"{donation.Enrollment?.Program?.Partner?.Name}" },
+                        { "Donation_Amount", $"{donation.Amount}" },
+                        { "Donation_Reason", $"{donation.Reason}" },
+                        { "Payment_Method", "Paypal" },
+                        { "Created_At", $"{capture.CreateTime}" },
+                        { "Home_Url", $"{AppSettings.Instance.ClientConfiguration.SiteBaseUrl}" }
+                    };
+                    if (_userContext.Email is not null)
+                        await _emailService.SendEmailNotification(EmailTemplateType.DonationUserTemplate,
+                            _userContext.Email, subjectReplacements, bodyReplacements, _: _);
 
-                //end of send email
+                    //end of send email
+                }
             }
 
             return Ok(_mapper.Map<DonationDto>(donation));
