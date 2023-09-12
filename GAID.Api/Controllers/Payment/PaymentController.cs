@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Net;
 using AutoMapper;
+using GAID.Api.Dto.Donation;
 using GAID.Api.Dto.Payment.Response;
 using GAID.Application.Email;
 using GAID.Application.Repositories;
@@ -138,7 +139,7 @@ public class PaymentController : ControllerBase
 
     [Authorize]
     [HttpPost("capture/{donationId:guid}")]
-    public async Task<ActionResult<Order>> CaptureOrder(Guid donationId, CancellationToken _ = default)
+    public async Task<ActionResult<DonationDto>> CaptureOrder(Guid donationId, CancellationToken _ = default)
     {
         try
         {
@@ -177,7 +178,7 @@ public class PaymentController : ControllerBase
                 //end of send email
             }
 
-            return Ok(capture);
+            return Ok(_mapper.Map<DonationDto>(donation));
         }
         catch (Exception e)
         {

@@ -11,4 +11,7 @@ public class DonationDto
     public decimal Amount { get; set; }
     public PaymentMethod Method { get; set; } = PaymentMethod.Paypal;
     public string PaypalOrderId { get; set; } = string.Empty;
+    public string CreatedByName { get; set; } = string.Empty;
+    public Guid CreatedById { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 }

@@ -64,7 +64,9 @@ public class AutoMapperProfile : Profile
             .ForMember(x => x.CreatedByName, opt => opt.MapFrom(src => src.CreatedBy.FullName));
         CreateMap<DonationDetailRequest, Donation>();
         CreateMap<PaymentCreateRequest, Donation>();
-        CreateMap<Donation, DonationDto>();
+        CreateMap<Donation, DonationDto>()
+            .ForMember(x => x.CreatedById, opt => opt.MapFrom(src => src.CreatedBy.Id))
+            .ForMember(x => x.CreatedByName, opt => opt.MapFrom(src => src.CreatedBy.FullName));
         CreateMap<Donation, DonationAdminDto>()
             .ForMember(x => x.ProgramId, opt => opt.MapFrom(src => src.Enrollment.Program.ProgramId))
             .ForMember(x => x.ProgramName, opt => opt.MapFrom(src => src.Enrollment.Program.Name))
