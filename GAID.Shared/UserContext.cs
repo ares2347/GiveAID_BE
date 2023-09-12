@@ -7,11 +7,12 @@ public class UserContext
     public Guid UserId { get; private set; }
     public string? Email { get; private set; }
     public string? FullName { get; private set; }
-    public IEnumerable<string> Roles { get; private set; }
+    public IEnumerable<string> Roles { get; private set; } = new List<string>();
 
     public static UserContext Build(ClaimsPrincipal? claimsPrincipal)
     {
-        HttpException.ThrowIfNull(claimsPrincipal);
+        if (claimsPrincipal is null)
+            return new UserContext();
         var emailClaim =
             claimsPrincipal!.Claims.FirstOrDefault(x =>
                 x.Type.Equals(ClaimTypes.Email, StringComparison.OrdinalIgnoreCase));
